@@ -15,7 +15,7 @@ DICCIONARIO_TRATAMIENTOS = {
     "ORUGAS": "Recogida manual en ataques iniciales. Tratamiento biológico altamente efectivo con Bacillus thuringiensis (var. kurstaki) aplicado sobre las hojas tiernas cuando la oruga es joven.",
     "ARAÑA ROJA": "Aumentar la humedad ambiental pulverizando agua (odian la humedad). Aplicar azufre mojable o tratamientos con aceite parafinado. En control biológico, introducir el ácaro depredador Phytoseiulus persimilis.",
     "MILDIU PULVERULENTO": "Eliminar y quemar restos afectados. Aplicar fungicidas a base de azufre, bicarbonato potásico o tratamientos preventivos con cola de caballo. Mejorar la aireación de la planta.",
-    "BOTRITIS": "Reducir drásticamente la humedad foliar and el riego. Podar partes afectadas con herramientas desinfectadas. Aplicar fungicidas biológicos a base de Bacillus subtilis o cobre en casos graves.",
+    "BOTRITIS": "Reducir drásticamente la humedad foliar y el riego. Podar partes afectadas con herramientas desinfectadas. Aplicar fungicidas biológicos a base de Bacillus subtilis o cobre en casos graves.",
     "COCHINILLA": "Limpieza manual con alcohol de quemar y algodón en plantas pequeñas. En ataques generalizados, aplicar aceite de verano combinado con un insecticida sistémico autorizado (ej. deltametrina).",
     "VIRUS": "No existe tratamiento curativo. Se debe arrancar y destruir la planta afectada inmediatamente para evitar el contagio. Es fundamental controlar las plagas de pulgón o mosca blanca, que actúan como vectores.",
     "MOSCA BLANCA": "Colocar trampas cromáticas amarillas pegajosas. Tratar con jabón potásico combinado con aceite de neem. En invernaderos, introducir el parasitoide Encarsia formosa.",
@@ -72,7 +72,7 @@ with col3:
     if st.checkbox("La planta ha perdido todas las hojas de golpe tras un cambio"): diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
     if st.checkbox("Hay grandes manchas o parches con pequeños insectos con forma de polilla"): diagnosticos_detectados["MOSCA BLANCA"] = "MOSCA BLANCA"
 
-# Panel de resultados blindado en plano contra errores de indentación
+# Panel de resultados blindado corregido con 'in' técnico obligatorio
 st.markdown("---")
 st.subheader("📋 Panel de Diagnósticos Encontrados")
 
@@ -80,10 +80,11 @@ if not diagnosticos_detectados:
     st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
 else:
     st.success(f"Se han detectado {len(diagnosticos_detectados)} problema(s) simultáneos en la planta:")
-    for prob, clave en diagnosticos_detectados.items():
+    # CORREGIDO EL 'IN' AQUÍ:
+    for prob, clave in diagnosticos_detectados.items():
         st.warning(f"🚨 **{prob}**")
         sol = DICCIONARIO_TRATAMIENTOS.get(clave, "Consulte el cuaderno de campo del Módulo MF0525_2.")
         st.info(f"🛠️ **Tratamiento:** {sol}")
 
-# Pie de página unificado y limpio
+# Pie de página unificado y limpio con tu firma AGV
 st.markdown("---")
