@@ -7,15 +7,22 @@ st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app permite identificar múltiples problemas simultáneos.")
 
 # Función corregida con enlace web directo y limpio a Google
+# Función mejorada con HTML puro para forzar la redirección en pestaña nueva sin bloqueos
 def boton_consulta_directa(diagnostico_txt):
     termino_busqueda = f"{diagnostico_txt} plantas sintomas tratamiento"
     url_codificada = urllib.parse.quote(termino_busqueda)
-    # Enlace directo estándar a la búsqueda de Google
     enlace_google = f"https://google.com{url_codificada}&tbm=isch"
     
-    # Botón interactivo limpio
-    st.link_button("🔍 Ver Fotos y Tratamiento", enlace_google, type="primary")
-
+    # Creamos un botón HTML real que burla las restricciones del servidor de Streamlit
+    st.markdown(
+        f'<a href="{enlace_google}" target="_blank" style="text-decoration: none;">'
+        f'<div style="background-color:#FF4B4B; color:white; border:none; '
+        f'padding:10px 20px; text-align:center; font-weight:bold;'
+        f'display:inline-block; font-size:16px; margin:4px 0px; cursor:pointer; '
+        f'border-radius:8px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">'
+        f'🔍 Ver Fotos y Tratamiento en Google</div></a>',
+        unsafe_allow_html=True
+    )
 # Estructura visual en 3 columnas en paralelo
 col1, col2, col3 = st.columns(3)
 
