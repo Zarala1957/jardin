@@ -6,14 +6,13 @@ st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", pa
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app permite identificar múltiples problemas simultáneos.")
 
-# Función limpia para abrir Google Imágenes en pestaña nueva sin fallos
+# Función infalible que usa enlaces de texto directo para evitar bloqueos del navegador
 def boton_consulta_directa(diagnostico_txt):
     termino_busqueda = f"{diagnostico_txt} plantas sintomas tratamiento"
     url_codificada = urllib.parse.quote(termino_busqueda)
+    # URL oficial de búsqueda en Google Imágenes
     enlace_google = f"https://google.com{url_codificada}&tbm=isch"
-    
-    # Botón nativo de Streamlit que abre en pestaña nueva de forma segura
-    st.link_button("🔍 Ver Fotos y Tratamiento", enlace_google, type="primary")
+    return enlace_google
 
 # Estructura visual en 3 columnas en paralelo
 col1, col2, col3 = st.columns(3)
@@ -99,12 +98,9 @@ if diagnosticos_detectados:
     st.success(f"Se han detectado **{len(diagnosticos_detectados)} problema(s)** simultáneos en la planta:")
     
     for nombre_problema, termino_busqueda in diagnosticos_detectados.items():
-        # AQUÍ ESTÁ EL CAMBIO ARREGLADO: Añadido el número 2 para crear dos columnas reales
-        col_diag, col_bot = st.columns(2)
-        with col_diag:
-            st.warning(f"🚨 **{nombre_problema}**")
-        with col_bot:
-            boton_consulta_directa(termino_busqueda)
+        url_final = boton_consulta_directa(termino_busqueda)
+        # Mostramos la alerta con el enlace integrado directamente en el texto para evitar bloqueos
+        st.markdown(f"🚨 **{nombre_problema}** — [👉 Haz clic aquí para ver Fotos y Tratamiento en Google]({url_final})")
 else:
     st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
 
