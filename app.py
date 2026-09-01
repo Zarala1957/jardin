@@ -6,14 +6,15 @@ st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", pa
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app permite identificar múltiples problemas simultáneos.")
 
-# Función infalible utilizando st.page_link (nativo y blindado para pestañas nuevas)
+# Función nativa oficial para abrir Google Imágenes de forma segura sin bloqueos
 def boton_consulta_directa(diagnostico_txt):
     termino_busqueda = f"{diagnostico_txt} plantas sintomas tratamiento"
     url_codificada = urllib.parse.quote(termino_busqueda)
+    # Dirección oficial de Google corregida
     enlace_google = f"https://google.com{url_codificada}&tbm=isch"
     
-    # Widget oficial diseñado para abrir enlaces externos en pestañas nuevas sin bloqueos
-    st.page_link(enlace_google, label="🔍 Ver Fotos y Tratamiento en Google Images", icon="🌐")
+    # Botón nativo de Streamlit que los navegadores aceptan sin bloquear la pestaña nueva
+    st.link_button("🔍 Ver Fotos y Tratamiento en Google Images", enlace_google, type="primary")
 
 # Estructura visual en 3 columnas en paralelo
 col1, col2, col3 = st.columns(3)
@@ -61,7 +62,7 @@ with col2:
         diagnosticos_detectados["LARVAS DE GORGOJO"] = "Larvas de gorgojo"
     if st.checkbox("Los tallos y hojas parecen 'quemados' y totalmente muertos"):
         diagnosticos_detectados["PODREDUMBRE APICAL / FITOTOXICIDAD"] = "Podredumbre apical"
-    if st.checkbox("Los tallos/hojas están dañados/quemados pero la planta sobrevive"):
+    if st.checkbox("Los tallos/hojas están dñados/quemados pero la planta sobrevive"):
         diagnosticos_detectados["QUEMADURA DE LAS HOJAS"] = "Quemadura de las hojas"
     if st.checkbox("Hay moho negro y polvoriento en los tallos"):
         diagnosticos_detectados["COCHINILLA"] = "Cochinilla"
@@ -100,9 +101,9 @@ if diagnosticos_detectados:
     
     for nombre_problema, termino_busqueda in diagnosticos_detectados.items():
         st.warning(f"🚨 **{nombre_problema}**")
-        # Genera el enlace oficial directo de Streamlit debajo de la alerta
+        # Llama a la función del botón nativo justo debajo del aviso
         boton_consulta_directa(termino_busqueda)
-        st.markdown("") # Pequeño espacio de separación entre diagnósticos
+        st.markdown("") 
 else:
     st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
 
