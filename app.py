@@ -1,30 +1,21 @@
 import streamlit as st
 import urllib.parse
 
-st.set_page_config(page_title="Diagnóstico de Jardinería Avanzado", page_icon="🌱", layout="wide")
+st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", page_icon="🌱", layout="wide")
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app permite identificar múltiples problemas simultáneos.")
 
-# Función corregida con enlace web directo y limpio a Google
+# Función limpia y corregida para abrir Google Imágenes en pestaña nueva sin fallos
 def boton_consulta_directa(diagnostico_txt):
     termino_busqueda = f"{diagnostico_txt} plantas sintomas tratamiento"
     url_codificada = urllib.parse.quote(termino_busqueda)
-    # Dirección oficial de Google Imágenes corregida:
+    # Dirección oficial corregida con /search?q=
     enlace_google = f"https://google.com{url_codificada}&tbm=isch"
     
-    # Botón oficial de Streamlit que abre siempre en pestaña nueva
+    # Botón nativo oficial de Streamlit (abre en pestaña nueva automáticamente)
     st.link_button("🔍 Ver Fotos y Tratamiento", enlace_google, type="primary")
-    
-    st.markdown(
-        f'<a href="{enlace_google}" target="_blank" style="text-decoration: none;">'
-        f'<div style="background-color:#FF4B4B; color:white; border:none; '
-        f'padding:10px 20px; text-align:center; font-weight:bold;'
-        f'display:inline-block; font-size:16px; margin:4px 0px; cursor:pointer; '
-        f'border-radius:8px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">'
-        f'🔍 Ver Fotos y Tratamiento en Google</div></a>',
-        unsafe_allow_html=True
-    )
+
 # Estructura visual en 3 columnas en paralelo
 col1, col2, col3 = st.columns(3)
 
@@ -109,12 +100,26 @@ if diagnosticos_detectados:
     st.success(f"Se han detectado **{len(diagnosticos_detectados)} problema(s)** simultáneos en la planta:")
     
     for nombre_problema, termino_busqueda in diagnosticos_detectados.items():
-        col_diag, col_bot = st.columns([3, 1])
+        col_diag, col_bot = st.columns()
         with col_diag:
             st.warning(f"🚨 **{nombre_problema}**")
         with col_bot:
             boton_consulta_directa(termino_busqueda)
 else:
     st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
+
+# ==================== PIE DE PÁGINA COMERCIAL Y LEGAL ====================
+st.markdown("---")
+st.markdown(
+    """
+    <div style="text-align: center; color: #666666; font-size: 14px; padding: 20px;">
+        <p>📋 <b>Módulo Formativo MF0525_2: Control Fitosanitario</b></p>
+        <p>© 2024 - 2026 Asistente de Diagnóstico Fitosanitario Avanzado. Todos los derechos reservados.</p>
+        <p><i>Desarrollado de forma privada para Prácticas de Identificación de Problemas en las Plantas.</i></p>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+
 
 
