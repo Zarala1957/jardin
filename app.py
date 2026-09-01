@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit st
 
 st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", page_icon="🌱", layout="wide")
 
@@ -108,7 +108,7 @@ with col3:
     if st.checkbox("Hay grandes manchas o parches con pequeños insectos con forma de polilla"):
         diagnosticos_detectados["MOSCA BLANCA"] = "MOSCA BLANCA"
 
-# ==================== PANEL DE RESULTADOS CON TRATAMIENTO ====================
+# ==================== PANEL DE RESULTADOS CON TRATAMIENTO BIEN ENLAZADO ====================
 st.markdown("---")
 st.subheader("📋 Panel de Diagnósticos Encontrados")
 
