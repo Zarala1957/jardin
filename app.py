@@ -6,23 +6,15 @@ st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", pa
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app permite identificar múltiples problemas simultáneos.")
 
-# Función infalible en HTML + JavaScript para forzar la apertura en pestaña nueva
+# Función oficial que usa el componente nativo de Streamlit para enlaces
 def boton_consulta_directa(diagnostico_txt):
     termino_busqueda = f"{diagnostico_txt} plantas sintomas tratamiento"
     url_codificada = urllib.parse.quote(termino_busqueda)
-    # Dirección oficial de Google Imágenes perfectamente estructurada
+    # Dirección oficial de Google Imágenes sin errores de formato
     enlace_google = f"https://google.com{url_codificada}&tbm=isch"
     
-    # Código JavaScript que fuerza al navegador a abrir una ventana nueva limpia
-    html_button = f"""
-    <button onclick="window.open('{enlace_google}', '_blank')" 
-    style="background-color: #FF4B4B; color: white; border: none; padding: 10px 20px; 
-    text-align: center; font-weight: bold; display: inline-block; font-size: 16px; 
-    margin: 4px 0px; cursor: pointer; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">
-    🔍 Ver Fotos y Tratamiento en Google Images
-    </button>
-    """
-    st.markdown(html_button, unsafe_allow_html=True)
+    # El botón oficial de la plataforma diseñado para abrir pestañas nuevas sin bloqueos
+    st.link_button("🔍 Ver Fotos y Tratamiento en Google Images", enlace_google, type="primary")
 
 # Estructura visual en 3 columnas en paralelo
 col1, col2, col3 = st.columns(3)
@@ -109,7 +101,7 @@ if diagnosticos_detectados:
     
     for nombre_problema, termino_busqueda in diagnosticos_detectados.items():
         st.warning(f"🚨 **{nombre_problema}**")
-        # Llama a la función del botón de JavaScript corregido
+        # Llama a la función del botón nativo corregido
         boton_consulta_directa(termino_busqueda)
         st.markdown("") 
 else:
@@ -120,9 +112,7 @@ st.markdown("---")
 st.markdown(
     """
     <div style="text-align: center; color: #666666; font-size: 14px; padding: 20px;">
-        <p>📋 <b>Módulo Formativo MF0525_2: Control Fitosanitario</b></p>
-        <p>© 2024 - 2026 Asistente de Diagnóstico Fitosanitario Avanzado. Todos los derechos reservados.</p>
-        <p><i>Desarrollado de forma privada para Prácticas de Identificación de Problemas en las Plantas.</i></p>
+        <p>© AGV 2026 Asistente de Diagnóstico Fitosanitario Avanzado. Todos los derechos reservados.</p>
     </div>
     """, 
     unsafe_allow_html=True
