@@ -4,7 +4,25 @@ import urllib.parse
 st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", page_icon="🌱", layout="wide")
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
-st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app muestra el diagnóstico e incrusta la búsqueda de Google debajo.")
+st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app permite identificar múltiples problemas simultáneos.")
+
+# Función infalible en HTML + JavaScript para forzar la apertura en pestaña nueva
+def boton_consulta_directa(diagnostico_txt):
+    termino_busqueda = f"{diagnostico_txt} plantas sintomas tratamiento"
+    url_codificada = urllib.parse.quote(termino_busqueda)
+    # Dirección oficial de Google Imágenes perfectamente estructurada
+    enlace_google = f"https://google.com{url_codificada}&tbm=isch"
+    
+    # Código JavaScript que fuerza al navegador a abrir una ventana nueva limpia
+    html_button = f"""
+    <button onclick="window.open('{enlace_google}', '_blank')" 
+    style="background-color: #FF4B4B; color: white; border: none; padding: 10px 20px; 
+    text-align: center; font-weight: bold; display: inline-block; font-size: 16px; 
+    margin: 4px 0px; cursor: pointer; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">
+    🔍 Ver Fotos y Tratamiento en Google Images
+    </button>
+    """
+    st.markdown(html_button, unsafe_allow_html=True)
 
 # Estructura visual en 3 columnas en paralelo
 col1, col2, col3 = st.columns(3)
@@ -82,7 +100,7 @@ with col3:
     if st.checkbox("La planta ha perdido todas las hojas de golpe tras un cambio"):
         diagnosticos_detectados["PLANTA ESTRESADA"] = "Planta estresada"
 
-# ==================== PANEL DE RESULTADOS INCRUSTADOS ====================
+# ==================== PANEL DE RESULTADOS SIMULTÁNEOS ====================
 st.markdown("---")
 st.subheader("📋 Panel de Diagnósticos Encontrados")
 
@@ -91,14 +109,8 @@ if diagnosticos_detectados:
     
     for nombre_problema, termino_busqueda in diagnosticos_detectados.items():
         st.warning(f"🚨 **{nombre_problema}**")
-        
-        # Preparamos la dirección de búsqueda
-        url_codificada = urllib.parse.quote(f"{termino_busqueda} plantas sintomas")
-        enlace_google = f"https://google.com{url_codificada}&tbm=isch&igu=1"
-        
-        # EXPLICACIÓN: Usamos st.iframe para empotrar Google dentro de la app con un alto de 500 píxeles
-        st.write(f"Visualizando resultados en vivo para {nombre_problema}:")
-        st.iframe(enlace_google, height=500)
+        # Llama a la función del botón de JavaScript corregido
+        boton_consulta_directa(termino_busqueda)
         st.markdown("") 
 else:
     st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
