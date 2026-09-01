@@ -6,13 +6,14 @@ st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", pa
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app permite identificar múltiples problemas simultáneos.")
 
-# Función infalible que usa enlaces de texto directo para evitar bloqueos del navegador
+# Función infalible utilizando st.page_link (nativo y blindado para pestañas nuevas)
 def boton_consulta_directa(diagnostico_txt):
     termino_busqueda = f"{diagnostico_txt} plantas sintomas tratamiento"
     url_codificada = urllib.parse.quote(termino_busqueda)
-    # URL oficial de búsqueda en Google Imágenes
     enlace_google = f"https://google.com{url_codificada}&tbm=isch"
-    return enlace_google
+    
+    # Widget oficial diseñado para abrir enlaces externos en pestañas nuevas sin bloqueos
+    st.page_link(enlace_google, label="🔍 Ver Fotos y Tratamiento en Google Images", icon="🌐")
 
 # Estructura visual en 3 columnas en paralelo
 col1, col2, col3 = st.columns(3)
@@ -98,9 +99,10 @@ if diagnosticos_detectados:
     st.success(f"Se han detectado **{len(diagnosticos_detectados)} problema(s)** simultáneos en la planta:")
     
     for nombre_problema, termino_busqueda in diagnosticos_detectados.items():
-        url_final = boton_consulta_directa(termino_busqueda)
-        # Mostramos la alerta con el enlace integrado directamente en el texto para evitar bloqueos
-        st.markdown(f"🚨 **{nombre_problema}** — [👉 Haz clic aquí para ver Fotos y Tratamiento en Google]({url_final})")
+        st.warning(f"🚨 **{nombre_problema}**")
+        # Genera el enlace oficial directo de Streamlit debajo de la alerta
+        boton_consulta_directa(termino_busqueda)
+        st.markdown("") # Pequeño espacio de separación entre diagnósticos
 else:
     st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
 
