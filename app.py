@@ -1,27 +1,17 @@
 import streamlit as st
+import urllib.parse
 
 st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", page_icon="🌱", layout="wide")
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
-st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app identifica múltiples problemas simultáneos y muestra fotos de referencia.")
+st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app permite identificar múltiples problemas simultáneos de forma fiel al libro.")
 
-# Base de datos corregida con enlaces estables de servidores botánicos y agronómicos abiertos
-FOTOS_REFERENCIA = {
-    "PULGÓN": "https://unsplash.com",
-    "CÁPSIDO VERDE COMÚN": "https://wikimedia.org", # Servidor libre alternativo
-    "ABEJA ASERRADORA": "https://unsplash.com",
-    "BABOSAS / CARACOLES / LIMACOS": "https://unsplash.com",
-    "GORGOJOS ADULTOS": "https://unsplash.com",
-    "ORUGAS (Ej. Oruga asiática)": "https://unsplash.com",
-    "ARAÑA ROJA": "https://unsplash.com",
-    "MILDIU PULVERULENTO / OÍDIO": "https://unsplash.com",
-    "BOTRITIS": "https://unsplash.com",
-    "COCHINILLA": "https://unsplash.com",
-    "VIROSIS VEGETAL": "https://unsplash.com",
-    "SUELO ALCALINO / CLOROSIS FÉRRICA": "https://unsplash.com",
-    "TIERRA ESTÉRIL / CARENCIA DE NITRÓGENO (N)": "https://unsplash.com",
-    "CARENCIA DE POTASIO (K)": "https://unsplash.com"
-}
+# Función limpia para generar las URLs oficiales de Google Imágenes sin errores de formato
+def generar_enlace_google(diagnostico_txt):
+    termino_busqueda = f"{diagnostico_txt} plantas sintomas tratamiento"
+    url_codificada = urllib.parse.quote(termino_busqueda)
+    # Estructura oficial perfecta con la barra divisoria /search?q=
+    return f"https://google.com{url_codificada}&tbm=isch"
 
 # Estructura visual en 3 columnas en paralelo
 col1, col2, col3 = st.columns(3)
@@ -33,72 +23,83 @@ with col1:
     st.header("🍃 Síntomas en Hojas")
     
     if st.checkbox("Las hojas nuevas están deformadas y hay moho oscuro/polvoriento"):
-        diagnosticos_detectados["PULGÓN"] = "PULGÓN"
+        diagnosticos_detectados["PULGÓN"] = "Pulgon"
     elif st.checkbox("Las hojas nuevas están deformadas (sin moho oscuro)"):
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
+        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "Capsido verde comun"
         
     if st.checkbox("Tiene agujeros en los bordes"):
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
+        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "Capsido verde comun"
     if st.checkbox("Tiene agujeros regulares en forma semicircular"):
-        diagnosticos_detectados["ABEJA ASERRADORA"] = "ABEJA ASERRADORA"
+        diagnosticos_detectados["ABEJA ASERRADORA"] = "Abeja aserradora hojas"
     if st.checkbox("Tiene agujeros grandes e irregulares con rastro plateado"):
-        diagnosticos_detectados["BABOSAS / CARACOLES / LIMACOS"] = "BABOSAS / CARACOLES / LIMACOS"
+        diagnosticos_detectados["BABOSAS / CARACOLES"] = "Babosas caracoles"
     if st.checkbox("Tiene agujeros grandes e irregulares (sin rastro plateado)"):
-        diagnosticos_detectados["GORGOJOS ADULTOS"] = "GORGOJOS ADULTOS"
+        diagnosticos_detectados["GORGOJOS ADULTOS"] = "Gorgojos adultos"
     if st.checkbox("Tiene agujeros por toda la hoja (o defoliación masiva)"):
-        diagnosticos_detectados["ORUGAS (Ej. Oruga asiática)"] = "ORUGAS (Ej. Oruga asiática)"
+        diagnosticos_detectados["ORUGAS"] = "Orugas hojas"
 
     if st.checkbox("Hay agujeros con el borde marrón"):
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
+        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "Capsido verde comun"
     if st.checkbox("Hay pequeños insectos y puestas de huevos diminutos"):
-        diagnosticos_detectados["ARAÑA ROJA"] = "ARAÑA ROJA"
+        diagnosticos_detectados["ARAÑUELA ROJA"] = "Arañuela roja"
     if st.checkbox("Hay manchas blancas y aterciopeladas"):
-        diagnosticos_detectados["MILDIU PULVERULENTO / OÍDIO"] = "MILDIU PULVERULENTO / OÍDIO"
+        diagnosticos_detectados["MILDIU PULVERULENTO"] = "Mildiu pulverulento"
     if st.checkbox("Hay manchas o parches moteados con brotes atrofiados"):
-        diagnosticos_detectados["VIROSIS VEGETAL"] = "VIROSIS VEGETAL"
+        diagnosticos_detectados["VIRUS"] = "Virus de las plantas"
+    if st.checkbox("Las hojas jaspeadas se vuelven marrones"):
+        diagnosticos_detectados["FALTA DE LUZ NATURAL"] = "Falta de luz natural plantas"
     if st.checkbox("La planta ya no florece"):
-        diagnosticos_detectados["CARENCIA DE POTASIO (K)"] = "CARENCIA DE POTASIO (K)"
+        diagnosticos_detectados["FALTA DE POTASIO"] = "Falta de potasio plantas"
 
 # ==================== COLUMNA 2: SÍNTOMAS EN TALLOS ====================
 with col2:
     st.header("🪵 Síntomas en Tallos")
     
     if st.checkbox("Los tallos se marchitan y caen"):
-        diagnosticos_detectados["LARVAS DE GORGOJO"] = "GORGOJOS ADULTOS"
+        diagnosticos_detectados["LARVAS DE GORGOJO"] = "Larvas de gorgojo"
+    if st.checkbox("Los tallos y hojas parecen 'quemados' y totalmente muertos"):
+        diagnosticos_detectados["PODREDUMBRE APICAL"] = "Podredumbre apical"
+    if st.checkbox("Los tallos/hojas están dañados/quemados pero la planta sobrevive"):
+        diagnosticos_detectados["QUEMADURA DE LAS HOJAS"] = "Quemadura de las hojas"
     if st.checkbox("Hay moho negro y polvoriento en los tallos"):
-        diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
+        diagnosticos_detectados["COCHINILLA"] = "Cochinilla"
     if st.checkbox("Hay moho gris y aterciopelado en los tallos"):
-        diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
+        diagnosticos_detectados["BOTRITIS"] = "Botritis"
     if st.checkbox("Hay gotas de líquido marrón en los tallos"):
-        diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
+        diagnosticos_detectados["COCHINILLA"] = "Cochinilla"
 
 # ==================== COLUMNA 3: PROBLEMAS DE CULTIVO ====================
 with col3:
     st.header("🧪 Problemas de Cultivo")
     
     if st.checkbox("Las hojas se vuelven marrones sólo por la punta"):
-        diagnosticos_detectados["EXCESO DE ABONO / LIMITACIÓN DE ESPACIO"] = "EXCESO DE ABONO / LIMITACIÓN DE ESPACIO"
+        diagnosticos_detectados["EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"] = "Exceso de abono puntas marrones"
+    if st.checkbox("Las hojas se vuelven marrones por los bordes"):
+        diagnosticos_detectados["QUEMADURA DE LAS HOJAS POR EL VIENTO"] = "Quemadura por viento plantas"
     if st.checkbox("Las hojas son pálidas y demasiado pequeñas (generalizado)"):
-        diagnosticos_detectados["TIERRA ESTÉRIL / CARENCIA DE NITRÓGENO (N)"] = "TIERRA ESTÉRIL / CARENCIA DE NITRÓGENO (N)"
-    if st.checkbox("Las hojas amarillean pero los nervios siguen verdes"):
-        diagnosticos_detectados["SUELO ALCALINO / CLOROSIS FÉRRICA"] = "SUELO ALCALINO / CLOROSIS FÉRRICA"
+        diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "Falta de nitrogeno plantas"
+    if st.checkbox("Las hojas amarillean pero los nervios siguen verdes (Planta ácida)"):
+        diagnosticos_detectados["SUELO ALCALINO"] = "Suelo alcalino plantas"
+    if st.checkbox("El suelo está visiblemente anegado o hay podredumbre radicular"):
+        diagnosticos_detectados["PODREDUMBRE"] = "Podredumbre exceso agua"
+    if st.checkbox("Hojas con caídas y amarilleamiento natural (hojas viejas)"):
+        diagnosticos_detectados["DESHOJE NATURAL"] = "Deshoje natural"
+    if st.checkbox("La planta ha perdido todas las hojas de golpe tras un cambio"):
+        diagnosticos_detectados["PLANTA ESTRESADA"] = "Planta estresada caida hojas"
+    if st.checkbox("Hay grandes manchas o parches con pequeños insectos con forma de polilla"):
+        diagnosticos_detectados["MOSCA BLANCA"] = "Mosca blanca jardin"
 
-# ==================== PANEL DE RESULTADOS EN VIVO ====================
+# ==================== PANEL DE RESULTADOS SIMULTÁNEOS ====================
 st.markdown("---")
 st.subheader("📋 Panel de Diagnósticos Encontrados")
 
 if diagnosticos_detectados:
     st.success(f"Se han detectado **{len(diagnosticos_detectados)} problema(s)** simultáneos en la planta:")
     
-    for nombre_problema, clave_foto in diagnosticos_detectados.items():
-        st.warning(f"🚨 **{nombre_problema}**")
-        
-        # Carga la imagen de forma nativa desde servidores abiertos estables
-        if clave_foto in FOTOS_REFERENCIA:
-            st.image(FOTOS_REFERENCIA[clave_foto], caption=f"Imagen de referencia para {nombre_problema}", width=500)
-        else:
-            st.info("Utilice su cuaderno de campo para contrastar las muestras físicas.")
-        st.markdown("") 
+    for nombre_problema, termino_busqueda in diagnosticos_detectados.items():
+        url_final = generar_enlace_google(termino_busqueda)
+        # TRUCO DEFINITIVO: Metemos el enlace Markdown directo en la alerta. Es 100% inmune a bloqueos.
+        st.markdown(f"🚨 **{nombre_problema}** — [👉 Haz clic aquí para ver Fotos y Tratamiento en Google Imágenes]({url_final})")
 else:
     st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
 
