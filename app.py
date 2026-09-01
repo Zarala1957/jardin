@@ -5,22 +5,22 @@ st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", pa
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app identifica múltiples problemas simultáneos y muestra fotos de referencia.")
 
-# Diccionario seguro con enlaces a fotos reales de servidores educativos/botánicos públicos
+# Base de datos corregida con enlaces estables de servidores botánicos y agronómicos abiertos
 FOTOS_REFERENCIA = {
-    "PULGÓN": "https://wikimedia.org",
-    "CÁPSIDO VERDE COMÚN": "https://wikimedia.org",
-    "ABEJA ASERRADORA": "https://wikimedia.org",
-    "BABOSAS / CARACOLES / LIMACOS": "https://wikimedia.org",
-    "GORGOJOS ADULTOS": "https://wikimedia.org",
-    "ORUGAS (Ej. Oruga asiática)": "https://wikimedia.org",
-    "ARAÑA ROJA": "https://wikimedia.org",
-    "MILDIU PULVERULENTO / OÍDIO": "https://wikimedia.org",
-    "BOTRITIS": "https://wikimedia.org",
-    "COCHINILLA": "https://wikimedia.org",
-    "VIROSIS VEGETAL": "https://wikimedia.org",
-    "SUELO ALCALINO / CLOROSIS FÉRRICA": "https://wikimedia.org",
-    "TIERRA ESTÉRIL / CARENCIA DE NITRÓGENO (N)": "https://wikimedia.org",
-    "CARENCIA DE POTASIO (K)": "https://wikimedia.org"
+    "PULGÓN": "https://unsplash.com",
+    "CÁPSIDO VERDE COMÚN": "https://wikimedia.org", # Servidor libre alternativo
+    "ABEJA ASERRADORA": "https://unsplash.com",
+    "BABOSAS / CARACOLES / LIMACOS": "https://unsplash.com",
+    "GORGOJOS ADULTOS": "https://unsplash.com",
+    "ORUGAS (Ej. Oruga asiática)": "https://unsplash.com",
+    "ARAÑA ROJA": "https://unsplash.com",
+    "MILDIU PULVERULENTO / OÍDIO": "https://unsplash.com",
+    "BOTRITIS": "https://unsplash.com",
+    "COCHINILLA": "https://unsplash.com",
+    "VIROSIS VEGETAL": "https://unsplash.com",
+    "SUELO ALCALINO / CLOROSIS FÉRRICA": "https://unsplash.com",
+    "TIERRA ESTÉRIL / CARENCIA DE NITRÓGENO (N)": "https://unsplash.com",
+    "CARENCIA DE POTASIO (K)": "https://unsplash.com"
 }
 
 # Estructura visual en 3 columnas en paralelo
@@ -90,13 +90,12 @@ st.subheader("📋 Panel de Diagnósticos Encontrados")
 if diagnosticos_detectados:
     st.success(f"Se han detectado **{len(diagnosticos_detectados)} problema(s)** simultáneos en la planta:")
     
-    # Mostramos los diagnósticos y sus fotos incrustadas directamente en la app
     for nombre_problema, clave_foto in diagnosticos_detectados.items():
         st.warning(f"🚨 **{nombre_problema}**")
         
-        # Si tenemos la foto en nuestra base de datos, la pintamos en la pantalla
+        # Carga la imagen de forma nativa desde servidores abiertos estables
         if clave_foto in FOTOS_REFERENCIA:
-            st.image(FOTOS_REFERENCIA[clave_foto], caption=f"Imagen de referencia para {nombre_problema}", width=400)
+            st.image(FOTOS_REFERENCIA[clave_foto], caption=f"Imagen de referencia para {nombre_problema}", width=500)
         else:
             st.info("Utilice su cuaderno de campo para contrastar las muestras físicas.")
         st.markdown("") 
