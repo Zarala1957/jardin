@@ -13,7 +13,7 @@ DICCIONARIO_TRATAMIENTOS = {
     "BABOSAS / CARACOLES": "Colocar trampas de cerveza o barreras físicas de ceniza/tierra de diatomeas alrededor del tallo. En infestaciones graves, emplear cebos selectivos de fosfato férrico (ecológico).",
     "GORGOJOS ADULTOS": "Tratamiento nocturno (cuando están activos) sacudiendo las ramas sobre una manta. Aplicar nematodos entomopatógenos en el suelo para controlar las larvas si es necesario.",
     "ORUGAS": "Recogida manual en ataques iniciales. Tratamiento biológico altamente efectivo con Bacillus thuringiensis (var. kurstaki) aplicado sobre las hojas tiernas cuando la oruga es joven.",
-    "ARAÑUELA ROJA": "Aumentar la humedad ambiental pulverizando agua (odian la humedad). Aplicar azufre mojable o tratamientos con aceite parafinado. En control biológico, introducir el ácaro depredador Phytoseiulus persimilis.",
+    "ARAÑA ROJA": "Aumentar la humedad ambiental pulverizando agua (odian la humedad). Aplicar azufre mojable o tratamientos con aceite parafinado. En control biológico, introducir el ácaro depredador Phytoseiulus persimilis.",
     "MILDIU PULVERULENTO / OÍDIO": "Eliminar y quemar restos afectados. Aplicar fungicidas a base de azufre, bicarbonato potásico o tratamientos preventivos con cola de caballo. Mejorar la aireación de la planta.",
     "BOTRITIS": "Reducir drásticamente la humedad foliar y el riego. Podar partes afectadas con herramientas desinfectadas. Aplicar fungicidas biológicos a base de Bacillus subtilis o cobre en casos graves.",
     "COCHINILLA": "Limpieza manual con alcohol de quemar y algodón en plantas pequeñas. En ataques generalizados, aplicar aceite de verano combinado con un insecticida sistémico autorizado (ej. deltametrina).",
@@ -23,7 +23,7 @@ DICCIONARIO_TRATAMIENTOS = {
     "QUEMADURA DE LAS HOJAS POR EL VIENTO": "Instalar barreras cortavientos o reubicar la planta a una zona protegida. Incrementar los riegos en días de viento seco para evitar la deshidratación de los bordes.",
     "FALTA DE NITROGENO / TIERRA ESTÉRIL": "Aportar materia orgánica al suelo (humus de lombriz, compost o estiércol maduro). Aplicar un abonado de fondo rico en Nitrógeno (N) de liberación lenta o quelatos si es urgente.",
     "SUELO ALCALINO": "Aplicar quelatos de hierro (Fe) directamente al riego para corregir la clorosis férrica. A largo plazo, acidificar el sustrato aportando turba rubia, azufre elemental o agua de riego corregida.",
-    "PODREDUMBRE": "Suspender los riegos de inmediato. Mejorar el drenaje del terreno o maceta aportando perlita o arena. Si afecta a las raíces, aplicar un fungicida específico para cuello (ej. Fosetil-Al).",
+    "PODREDUMBRE": "Suspender los riegos de inmediato. Mejorar el drenaje del terreno o maceta aportando perlita o arena. Si afecta a las raíces, aplicar un fungicistad específico para cuello (ej. Fosetil-Al).",
     "DESHOJE NATURAL": "Proceso fisiológico normal en hojas viejas de la zona baja. No requiere acción. Mantener el mantenimiento habitual de la planta retirando las hojas secas caídas.",
     "PLANTA ESTRESADA": "Evitar mover la planta de sitio constantemente. Suspender el abono hasta que se estabilice. Mantener riegos moderados y estables sin saturar el suelo hasta ver nuevos brotes.",
     "FALTA DE LUZ NATURAL": "Trasladar la planta de forma progresiva a una ubicación con mayor exposición solar o iluminación indirecta brillante (evitar sol directo de golpe para no quemarla).",
@@ -60,7 +60,7 @@ with col1:
     if st.checkbox("Hay agujeros con el borde marrón"):
         diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
     if st.checkbox("Hay pequeños insectos y puestas de huevos diminutos"):
-        diagnosticos_detectados["ARAÑUELA ROJA"] = "ARAÑUELA ROJA"
+        diagnosticos_detectados["ARAÑA ROJA"] = "ARAÑA ROJA"
     if st.checkbox("Hay manchas blancas y aterciopeladas"):
         diagnosticos_detectados["MILDIU PULVERULENTO"] = "MILDIU PULVERULENTO"
     if st.checkbox("Hay manchas o parches moteados con brotes atrofiados"):
@@ -96,7 +96,7 @@ with col3:
     if st.checkbox("Las hojas se vuelven marrones por los bordes"):
         diagnosticos_detectados["QUEMADURA DE LAS HOJAS POR EL VIENTO"] = "QUEMADURA DE LAS HOJAS POR EL VIENTO"
     if st.checkbox("Las hojas son pálidas y demasiado pequeñas (generalizado)"):
-        diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "Falta de nitrogeno"
+        diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "FALTA DE NITROGENO / TIERRA ESTÉRIL"
     if st.checkbox("Las hojas amarillean pero los nervios siguen verdes (Planta ácida)"):
         diagnosticos_detectados["SUELO ALCALINO"] = "SUELO ALCALINO"
     if st.checkbox("El suelo está visiblemente anegado o hay podredumbre radicular"):
@@ -113,3 +113,5 @@ st.markdown("---")
 st.subheader("📋 Panel de Diagnósticos Encontrados")
 
 if diagnosticos_detectados:
+    st.success(f"Se han detectado **{len(diagnosticos_detectados)} problema(s)** simultáneos en la planta:")
+    
