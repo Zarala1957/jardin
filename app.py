@@ -1,4 +1,5 @@
-import streamlit st
+import streamlit as st
+import urllib.parse
 
 st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", page_icon="🌱", layout="wide")
 
@@ -113,5 +114,3 @@ st.markdown("---")
 st.subheader("📋 Panel de Diagnósticos Encontrados")
 
 if diagnosticos_detectados:
-    st.success(f"Se han detectado **{len(diagnosticos_detectados)} problema(s)** simultáneos en la planta:")
-    
