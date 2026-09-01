@@ -1,12 +1,11 @@
 import streamlit as st
-import urllib.parse
 
 st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", page_icon="🌱", layout="wide")
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app identificará los problemas y te dará el tratamiento fitosanitario inmediato.")
 
-# ==================== MATRIZ DE TRATAMIENTOS FITOSANITARIOS ====================
+# Matriz completa de soluciones técnicas oficiales (MF0525_2)
 DICCIONARIO_TRATAMIENTOS = {
     "PULGÓN": "Tratamiento biológico con jabón potásico (2%) y aceite de neem. En ataques severos, emplear piretrinas naturales o fauna útil (adalia bipunctata). Eliminar brotes muy colapsados.",
     "CÁPSIDO VERDE COMÚN": "Monitorear las brotaciones. Encontrando adultos, aplicar tratamientos al atardecer con jabón fosfórico o piretroides autorizados. Retirar malas hierbas colindantes.",
@@ -16,7 +15,7 @@ DICCIONARIO_TRATAMIENTOS = {
     "ORUGAS": "Recogida manual en ataques iniciales. Tratamiento biológico altamente efectivo con Bacillus thuringiensis (var. kurstaki) aplicado sobre las hojas tiernas cuando la oruga es joven.",
     "ARAÑA ROJA": "Aumentar la humedad ambiental pulverizando agua (odian la humedad). Aplicar azufre mojable o tratamientos con aceite parafinado. En control biológico, introducir el ácaro depredador Phytoseiulus persimilis.",
     "MILDIU PULVERULENTO": "Eliminar y quemar restos afectados. Aplicar fungicidas a base de azufre, bicarbonato potásico o tratamientos preventivos con cola de caballo. Mejorar la aireación de la planta.",
-    "BOTRITIS": "Reducir drásticamente la humedad foliar y el riego. Podar partes afectadas con herramientas desinfectadas. Aplicar fungicidas biológicos a base de Bacillus subtilis o cobre en casos graves.",
+    "BOTRITIS": "Reducir drásticamente la humedad foliar and el riego. Podar partes afectadas con herramientas desinfectadas. Aplicar fungicidas biológicos a base de Bacillus subtilis o cobre en casos graves.",
     "COCHINILLA": "Limpieza manual con alcohol de quemar y algodón en plantas pequeñas. En ataques generalizados, aplicar aceite de verano combinado con un insecticida sistémico autorizado (ej. deltametrina).",
     "VIRUS": "No existe tratamiento curativo. Se debe arrancar y destruir la planta afectada inmediatamente para evitar el contagio. Es fundamental controlar las plagas de pulgón o mosca blanca, que actúan como vectores.",
     "MOSCA BLANCA": "Colocar trampas cromáticas amarillas pegajosas. Tratar con jabón potásico combinado con aceite de neem. En invernaderos, introducir el parasitoide Encarsia formosa.",
@@ -33,84 +32,58 @@ DICCIONARIO_TRATAMIENTOS = {
     "QUEMADURA DE LAS HOJAS": "Proporcionar sombreado provisional durante las horas centrales del día. Ajustar la frecuencia de riego para que la planta responda mejor a los picos de calor extremo."
 }
 
-# Estructura visual en 3 columnas en paralelo
+# Estructura de las 3 grandes columnas del libro
 col1, col2, col3 = st.columns(3)
-
 diagnosticos_detectados = {}
 
-# ==================== COLUMNA 1: SÍNTOMAS EN HOJAS ====================
 with col1:
     st.header("🍃 Síntomas en Hojas")
-    
-    if st.checkbox("Las hojas nuevas están deformadas y hay moho oscuro/polvoriento"):
-        diagnosticos_detectados["PULGÓN"] = "PULGÓN"
-    elif st.checkbox("Las hojas nuevas están deformadas (sin moho oscuro)"):
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
-        
-    if st.checkbox("Tiene agujeros en los bordes"):
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
-    if st.checkbox("Tiene agujeros regulares en forma semicircular"):
-        diagnosticos_detectados["ABEJA ASERRADORA"] = "ABEJA ASERRADORA"
-    if st.checkbox("Tiene agujeros grandes e irregulares con rastro plateado"):
-        diagnosticos_detectados["BABOSAS / CARACOLES"] = "BABOSAS / CARACOLES"
-    if st.checkbox("Tiene agujeros grandes e irregulares (sin rastro plateado)"):
-        diagnosticos_detectados["GORGOJOS ADULTOS"] = "GORGOJOS ADULTOS"
-    if st.checkbox("Tiene agujeros por toda la hoja (o defoliación masiva)"):
-        diagnosticos_detectados["ORUGAS"] = "ORUGAS"
+    if st.checkbox("Las hojas nuevas están deformadas y hay moho oscuro/polvoriento"): diagnosticos_detectados["PULGÓN"] = "PULGÓN"
+    if st.checkbox("Las hojas nuevas están deformadas (sin moho oscuro)"): diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
+    if st.checkbox("Tiene agujeros en los bordes"): diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
+    if st.checkbox("Tiene agujeros regulares en forma semicircular"): diagnosticos_detectados["ABEJA ASERRADORA"] = "ABEJA ASERRADORA"
+    if st.checkbox("Tiene agujeros grandes e irregulares con rastro plateado"): diagnosticos_detectados["BABOSAS / CARACOLES"] = "BABOSAS / CARACOLES"
+    if st.checkbox("Tiene agujeros grandes e irregulares (sin rastro plateado)"): diagnosticos_detectados["GORGOJOS ADULTOS"] = "GORGOJOS ADULTOS"
+    if st.checkbox("Tiene agujeros por toda la hoja (o defoliación masiva)"): diagnosticos_detectados["ORUGAS"] = "ORUGAS"
+    if st.checkbox("Hay agujeros con el borde marrón"): diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
+    if st.checkbox("Hay pequeños insectos y puestas de huevos diminutos"): diagnosticos_detectados["ARAÑA ROJA"] = "ARAÑA ROJA"
+    if st.checkbox("Hay manchas blancas y aterciopeladas"): diagnosticos_detectados["MILDIU PULVERULENTO"] = "MILDIU PULVERULENTO"
+    if st.checkbox("Hay manchas o parches moteados con brotes atrofiados"): diagnosticos_detectados["VIRUS"] = "VIRUS"
+    if st.checkbox("Las hojas jaspeadas se vuelven marrones"): diagnosticos_detectados["FALTA DE LUZ NATURAL"] = "FALTA DE LUZ NATURAL"
+    if st.checkbox("La planta ya no florece"): diagnosticos_detectados["FALTA DE POTASIO"] = "FALTA DE POTASIO"
 
-    if st.checkbox("Hay agujeros con el borde marrón"):
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
-    if st.checkbox("Hay pequeños insectos y puestas de huevos diminutos"):
-        diagnosticos_detectados["ARAÑA ROJA"] = "ARAÑA ROJA"
-    if st.checkbox("Hay manchas blancas y aterciopeladas"):
-        diagnosticos_detectados["MILDIU PULVERULENTO"] = "MILDIU PULVERULENTO"
-    if st.checkbox("Hay manchas o parches moteados con brotes atrofiados"):
-        diagnosticos_detectados["VIRUS"] = "VIRUS"
-    if st.checkbox("Las hojas jaspeadas se vuelven marrones"):
-        diagnosticos_detectados["FALTA DE LUZ NATURAL"] = "FALTA DE LUZ NATURAL"
-    if st.checkbox("La planta ya no florece"):
-        diagnosticos_detectados["FALTA DE POTASIO"] = "FALTA DE POTASIO"
-
-# ==================== COLUMNA 2: SÍNTOMAS EN TALLOS ====================
 with col2:
     st.header("🪵 Síntomas en Tallos")
-    
-    if st.checkbox("Los tallos se marchitan y caen"):
-        diagnosticos_detectados["LARVAS DE GORGOJO"] = "LARVAS DE GORGOJO"
-    if st.checkbox("Los tallos y hojas parecen 'quemados' y totalmente muertos"):
-        diagnosticos_detectados["PODREDUMBRE APICAL"] = "PODREDUMBRE APICAL"
-    if st.checkbox("Los tallos/hojas están dañados/quemados pero la planta sobrevive"):
-        diagnosticos_detectados["QUEMADURA DE LAS HOJAS"] = "QUEMADURA DE LAS HOJAS"
-    if st.checkbox("Hay moho negro y polvoriento en los tallos"):
-        diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
-    if st.checkbox("Hay moho gris y aterciopelado en los tallos"):
-        diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
-    if st.checkbox("Hay gotas de líquido marrón en los tallos"):
-        diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
+    if st.checkbox("Los tallos se marchitan y caen"): diagnosticos_detectados["LARVAS DE GORGOJO"] = "LARVAS DE GORGOJO"
+    if st.checkbox("Los tallos y hojas parecen 'quemados' y totalmente muertos"): diagnosticos_detectados["PODREDUMBRE APICAL"] = "PODREDUMBRE APICAL"
+    if st.checkbox("Los tallos/hojas están dañados/quemados pero la planta sobrevive"): diagnosticos_detectados["QUEMADURA DE LAS HOJAS"] = "QUEMADURA DE LAS HOJAS"
+    if st.checkbox("Hay moho negro y polvoriento en los tallos"): diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
+    if st.checkbox("Hay moho gris y aterciopelado en los tallos"): diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
+    if st.checkbox("Hay gotas de líquido marrón en los tallos"): diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
 
-# ==================== COLUMNA 3: PROBLEMAS DE CULTIVO ====================
 with col3:
     st.header("🧪 Problemas de Cultivo")
-    
-    if st.checkbox("Las hojas se vuelven marrones sólo por la punta"):
-        diagnosticos_detectados["EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"] = "EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"
-    if st.checkbox("Las hojas se vuelven marrones por los bordes"):
-        diagnosticos_detectados["QUEMADURA DE LAS HOJAS POR EL VIENTO"] = "QUEMADURA DE LAS HOJAS POR EL VIENTO"
-    if st.checkbox("Las hojas son pálidas y demasiado pequeñas (generalizado)"):
-        diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "FALTA DE NITROGENO / TIERRA ESTÉRIL"
-    if st.checkbox("Las hojas amarillean pero los nervios siguen verdes (Planta ácida)"):
-        diagnosticos_detectados["SUELO ALCALINO"] = "SUELO ALCALINO"
-    if st.checkbox("El suelo está visiblemente anegado o hay podredumbre radicular"):
-        diagnosticos_detectados["PODREDUMBRE"] = "PODREDUMBRE"
-    if st.checkbox("Hojas con caídas y amarilleamiento natural (hojas viejas)"):
-        diagnosticos_detectados["DESHOJE NATURAL"] = "DESHOJE NATURAL"
-    if st.checkbox("La planta ha perdido todas las hojas de golpe tras un cambio"):
-        diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
-    if st.checkbox("Hay grandes manchas o parches con pequeños insectos con forma de polilla"):
-        diagnosticos_detectados["MOSCA BLANCA"] = "MOSCA BLANCA"
+    if st.checkbox("Las hojas se vuelven marrones sólo por la punta"): diagnosticos_detectados["EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"] = "EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"
+    if st.checkbox("Las hojas se vuelven marrones por los bordes"): diagnosticos_detectados["QUEMADURA DE LAS HOJAS POR EL VIENTO"] = "QUEMADURA DE LAS HOJAS POR EL VIENTO"
+    if st.checkbox("Las hojas son pálidas y demasiado pequeñas (generalizado)"): diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "FALTA DE NITROGENO / TIERRA ESTÉRIL"
+    if st.checkbox("Las hojas amarillean pero los nervios siguen verdes (Planta ácida)"): diagnosticos_detectados["SUELO ALCALINO"] = "SUELO ALCALINO"
+    if st.checkbox("El suelo está visiblemente anegado o hay podredumbre radicular"): diagnosticos_detectados["PODREDUMBRE"] = "PODREDUMBRE"
+    if st.checkbox("Hojas con caídas y amarilleamiento natural (hojas viejas)"): diagnosticos_detectados["DESHOJE NATURAL"] = "DESHOJE NATURAL"
+    if st.checkbox("La planta ha perdido todas las hojas de golpe tras un cambio"): diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
+    if st.checkbox("Hay grandes manchas o parches con pequeños insectos con forma de polilla"): diagnosticos_detectados["MOSCA BLANCA"] = "MOSCA BLANCA"
 
-# ==================== PANEL DE RESULTADOS CON TRATAMIENTO BIEN ENLAZADO ====================
+# Panel de resultados blindado en plano contra errores de indentación
 st.markdown("---")
 st.subheader("📋 Panel de Diagnósticos Encontrados")
 
-if diagnosticos_detectados:
+if not diagnosticos_detectados:
+    st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
+else:
+    st.success(f"Se han detectado {len(diagnosticos_detectados)} problema(s) simultáneos en la planta:")
+    for prob, clave en diagnosticos_detectados.items():
+        st.warning(f"🚨 **{prob}**")
+        sol = DICCIONARIO_TRATAMIENTOS.get(clave, "Consulte el cuaderno de campo del Módulo MF0525_2.")
+        st.info(f"🛠️ **Tratamiento:** {sol}")
+
+# Pie de página unificado y limpio
+st.markdown("---")
