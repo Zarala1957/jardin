@@ -1,20 +1,27 @@
 import streamlit as st
-import urllib.parse
 
 st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", page_icon="🌱", layout="wide")
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
-st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app permite identificar múltiples problemas simultáneos.")
+st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app identifica múltiples problemas simultáneos y muestra fotos de referencia.")
 
-# Función oficial que usa el componente nativo de Streamlit para enlaces
-def boton_consulta_directa(diagnostico_txt):
-    termino_busqueda = f"{diagnostico_txt} plantas sintomas tratamiento"
-    url_codificada = urllib.parse.quote(termino_busqueda)
-    # Dirección oficial de Google Imágenes sin errores de formato
-    enlace_google = f"https://google.com{url_codificada}&tbm=isch"
-    
-    # El botón oficial de la plataforma diseñado para abrir pestañas nuevas sin bloqueos
-    st.link_button("🔍 Ver Fotos y Tratamiento en Google Images", enlace_google, type="primary")
+# Diccionario seguro con enlaces a fotos reales de servidores educativos/botánicos públicos
+FOTOS_REFERENCIA = {
+    "PULGÓN": "https://wikimedia.org",
+    "CÁPSIDO VERDE COMÚN": "https://wikimedia.org",
+    "ABEJA ASERRADORA": "https://wikimedia.org",
+    "BABOSAS / CARACOLES / LIMACOS": "https://wikimedia.org",
+    "GORGOJOS ADULTOS": "https://wikimedia.org",
+    "ORUGAS (Ej. Oruga asiática)": "https://wikimedia.org",
+    "ARAÑA ROJA": "https://wikimedia.org",
+    "MILDIU PULVERULENTO / OÍDIO": "https://wikimedia.org",
+    "BOTRITIS": "https://wikimedia.org",
+    "COCHINILLA": "https://wikimedia.org",
+    "VIROSIS VEGETAL": "https://wikimedia.org",
+    "SUELO ALCALINO / CLOROSIS FÉRRICA": "https://wikimedia.org",
+    "TIERRA ESTÉRIL / CARENCIA DE NITRÓGENO (N)": "https://wikimedia.org",
+    "CARENCIA DE POTASIO (K)": "https://wikimedia.org"
+}
 
 # Estructura visual en 3 columnas en paralelo
 col1, col2, col3 = st.columns(3)
@@ -26,83 +33,72 @@ with col1:
     st.header("🍃 Síntomas en Hojas")
     
     if st.checkbox("Las hojas nuevas están deformadas y hay moho oscuro/polvoriento"):
-        diagnosticos_detectados["PULGÓN"] = "Pulgon"
+        diagnosticos_detectados["PULGÓN"] = "PULGÓN"
     elif st.checkbox("Las hojas nuevas están deformadas (sin moho oscuro)"):
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "Capsido verde comun"
+        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
         
     if st.checkbox("Tiene agujeros en los bordes"):
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "Capsido verde comun"
+        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
     if st.checkbox("Tiene agujeros regulares en forma semicircular"):
-        diagnosticos_detectados["ABEJA ASERRADORA"] = "Abeja aserradora hojas"
+        diagnosticos_detectados["ABEJA ASERRADORA"] = "ABEJA ASERRADORA"
     if st.checkbox("Tiene agujeros grandes e irregulares con rastro plateado"):
-        diagnosticos_detectados["BABOSAS / CARACOLES / LIMACOS"] = "Limacos"
+        diagnosticos_detectados["BABOSAS / CARACOLES / LIMACOS"] = "BABOSAS / CARACOLES / LIMACOS"
     if st.checkbox("Tiene agujeros grandes e irregulares (sin rastro plateado)"):
-        diagnosticos_detectados["GORGOJOS ADULTOS"] = "Gorgojos adultos"
+        diagnosticos_detectados["GORGOJOS ADULTOS"] = "GORGOJOS ADULTOS"
     if st.checkbox("Tiene agujeros por toda la hoja (o defoliación masiva)"):
-        diagnosticos_detectados["ORUGAS (Ej. Oruga asiática)"] = "Orugas hojas"
+        diagnosticos_detectados["ORUGAS (Ej. Oruga asiática)"] = "ORUGAS (Ej. Oruga asiática)"
 
     if st.checkbox("Hay agujeros con el borde marrón"):
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "Capsido verde comun"
+        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
     if st.checkbox("Hay pequeños insectos y puestas de huevos diminutos"):
-        diagnosticos_detectados["ARAÑA ROJA"] = "Araña roja"
+        diagnosticos_detectados["ARAÑA ROJA"] = "ARAÑA ROJA"
     if st.checkbox("Hay manchas blancas y aterciopeladas"):
-        diagnosticos_detectados["MILDIU PULVERULENTO / OÍDIO"] = "Mildiu pulverulento"
+        diagnosticos_detectados["MILDIU PULVERULENTO / OÍDIO"] = "MILDIU PULVERULENTO / OÍDIO"
     if st.checkbox("Hay manchas o parches moteados con brotes atrofiados"):
-        diagnosticos_detectados["VIROSIS VEGETAL"] = "Virus de las plantas"
-    if st.checkbox("Las hojas jaspeadas se vuelven marrones"):
-        diagnosticos_detectados["FALTA DE LUZ NATURAL (Zona de umbría)"] = "Falta de luz"
+        diagnosticos_detectados["VIROSIS VEGETAL"] = "VIROSIS VEGETAL"
     if st.checkbox("La planta ya no florece"):
-        diagnosticos_detectados["CARENCIA DE POTASIO (K)"] = "Falta de potasio"
+        diagnosticos_detectados["CARENCIA DE POTASIO (K)"] = "CARENCIA DE POTASIO (K)"
 
 # ==================== COLUMNA 2: SÍNTOMAS EN TALLOS ====================
 with col2:
     st.header("🪵 Síntomas en Tallos")
     
     if st.checkbox("Los tallos se marchitan y caen"):
-        diagnosticos_detectados["LARVAS DE GORGOJO"] = "Larvas de gorgojo"
-    if st.checkbox("Los tallos y hojas parecen 'quemados' y totalmente muertos"):
-        diagnosticos_detectados["PODREDUMBRE APICAL / FITOTOXICIDAD"] = "Podredumbre apical"
-    if st.checkbox("Los tallos/hojas están dañados/quemados pero la planta sobrevive"):
-        diagnosticos_detectados["QUEMADURA DE LAS HOJAS"] = "Quemadura de las hojas"
+        diagnosticos_detectados["LARVAS DE GORGOJO"] = "GORGOJOS ADULTOS"
     if st.checkbox("Hay moho negro y polvoriento en los tallos"):
-        diagnosticos_detectados["COCHINILLA"] = "Cochinilla"
+        diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
     if st.checkbox("Hay moho gris y aterciopelado en los tallos"):
-        diagnosticos_detectados["BOTRITIS"] = "Botritis"
+        diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
     if st.checkbox("Hay gotas de líquido marrón en los tallos"):
-        diagnosticos_detectados["COCHINILLA"] = "Cochinilla"
+        diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
 
 # ==================== COLUMNA 3: PROBLEMAS DE CULTIVO ====================
 with col3:
     st.header("🧪 Problemas de Cultivo")
     
     if st.checkbox("Las hojas se vuelven marrones sólo por la punta"):
-        diagnosticos_detectados["EXCESO DE ABONO / LIMITACIÓN DE ESPACIO"] = "Exceso de abono"
-    if st.checkbox("Las hojas se vuelven marrones por los bordes"):
-        diagnosticos_detectados["QUEMADURA POR EL VIENTO"] = "Quemadura por viento"
+        diagnosticos_detectados["EXCESO DE ABONO / LIMITACIÓN DE ESPACIO"] = "EXCESO DE ABONO / LIMITACIÓN DE ESPACIO"
     if st.checkbox("Las hojas son pálidas y demasiado pequeñas (generalizado)"):
-        diagnosticos_detectados["TIERRA ESTÉRIL / CARENCIA DE NITRÓGENO (N)"] = "Falta de nitrogeno"
+        diagnosticos_detectados["TIERRA ESTÉRIL / CARENCIA DE NITRÓGENO (N)"] = "TIERRA ESTÉRIL / CARENCIA DE NITRÓGENO (N)"
     if st.checkbox("Las hojas amarillean pero los nervios siguen verdes"):
-        diagnosticos_detectados["SUELO ALCALINO / CLOROSIS FÉRRICA"] = "Clorosis ferrica"
-    if st.checkbox("El suelo está visiblemente anegado o hay podredumbre radicular"):
-        diagnosticos_detectados["EXCESO DE AGUA / TERRENO ANEGADO"] = "Podredumbre exceso agua"
-    if st.checkbox("Hojas secas, crujientes o marchitamiento por falta de agua"):
-        diagnosticos_detectados["AUSENCIA DE RIEGO"] = "Falta de riego"
-    if st.checkbox("Hojas con caídas y amarilleamiento natural (hojas viejas)"):
-        diagnosticos_detectados["DESHOJE NATURAL"] = "Deshoje natural"
-    if st.checkbox("La planta ha perdido todas las hojas de golpe tras un cambio"):
-        diagnosticos_detectados["PLANTA ESTRESADA"] = "Planta estresada"
+        diagnosticos_detectados["SUELO ALCALINO / CLOROSIS FÉRRICA"] = "SUELO ALCALINO / CLOROSIS FÉRRICA"
 
-# ==================== PANEL DE RESULTADOS SIMULTÁNEOS ====================
+# ==================== PANEL DE RESULTADOS EN VIVO ====================
 st.markdown("---")
 st.subheader("📋 Panel de Diagnósticos Encontrados")
 
 if diagnosticos_detectados:
     st.success(f"Se han detectado **{len(diagnosticos_detectados)} problema(s)** simultáneos en la planta:")
     
-    for nombre_problema, termino_busqueda in diagnosticos_detectados.items():
+    # Mostramos los diagnósticos y sus fotos incrustadas directamente en la app
+    for nombre_problema, clave_foto in diagnosticos_detectados.items():
         st.warning(f"🚨 **{nombre_problema}**")
-        # Llama a la función del botón nativo corregido
-        boton_consulta_directa(termino_busqueda)
+        
+        # Si tenemos la foto en nuestra base de datos, la pintamos en la pantalla
+        if clave_foto in FOTOS_REFERENCIA:
+            st.image(FOTOS_REFERENCIA[clave_foto], caption=f"Imagen de referencia para {nombre_problema}", width=400)
+        else:
+            st.info("Utilice su cuaderno de campo para contrastar las muestras físicas.")
         st.markdown("") 
 else:
     st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
@@ -112,7 +108,9 @@ st.markdown("---")
 st.markdown(
     """
     <div style="text-align: center; color: #666666; font-size: 14px; padding: 20px;">
-        <p>© AGV 2026 Asistente de Diagnóstico Fitosanitario Avanzado. Todos los derechos reservados.</p>
+        <p>📋 <b>Módulo Formativo MF0525_2: Control Fitosanitario</b></p>
+        <p>© 2024 - 2026 Asistente de Diagnóstico Fitosanitario Avanzado. Todos los derechos reservados.</p>
+        <p><i>Desarrollado de forma privada para Prácticas de Identificación de Problemas en las Plantas.</i></p>
     </div>
     """, 
     unsafe_allow_html=True
