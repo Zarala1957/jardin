@@ -51,6 +51,24 @@ st.markdown("""
         font-size: 0.9rem;
         display: inline-block;
     }
+    .btn-subir {
+        display: block;
+        width: 100%;
+        background-color: #0E1117;
+        color: #FFFFFF !important;
+        text-align: center;
+        padding: 8px 0px;
+        border-radius: 8px;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-top: 6px;
+        border: 1px solid #4F4F4F;
+    }
+    .btn-subir:hover {
+        background-color: #262730;
+        color: #FFFFFF !important;
+    }
     @media (max-width: 768px) {
         .block-container { padding-top: 0.5rem !important; }
         html, body, [class*="css"] { font-size: 14px !important; }
@@ -69,16 +87,8 @@ if "reset_key" not in st.session_state:
 def limpiar_casillas():
     st.session_state.reset_key += 1
 
-# Función para renderizar el botón de subir mediante clic directo de usuario
-def render_boton_subir():
-    st.components.v1.html("""
-        <button onclick="window.parent.scrollTo({top: 0, behavior: 'smooth'});" 
-                style="width: 100%; height: 38px; background-color: #0E1117; color: #FFFFFF; 
-                       border: 1px solid #4F4F4F; border-radius: 8px; font-weight: bold; 
-                       cursor: pointer; font-size: 14px; margin-top: 4px;">
-            ⬆️ Ir Arriba
-        </button>
-    """, height=48)
+# Ancla de destino superior para el botón
+st.markdown('<div id="inicio"></div>', unsafe_allow_html=True)
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta para obtener el tratamiento fitosanitario inmediato.")
@@ -98,7 +108,7 @@ DICCIONARIO_TRATAMIENTOS = {
     "ABEJA ASERRADORA": "El daño suele ser puramente estético. No se recomiendan tratamientos químicos drásticos. Colocar barreras físicas o favorecer la biodiversidad para ahuyentarlas.",
     "GORGOJOS ADULTOS": "Tratamiento nocturno (cuando están activos) sacudiendo las ramas sobre una manta. Aplicar nematodos entomopatógenos en el suelo para controlar las larvas si es necesario.",
     "BABOSAS / CARACOLES": "Colocar trampas de cerveza o barreras físicas de ceniza/tierra de diatomeas alrededor del tallo. En infestaciones graves, emplear cebos selectivos de fosfato férrico (ecológico).",
-    "ORUGAS": "Recogida manual en ataques iniciales. Tratamiento biológico altamente efectivo con Bacillus thuringiensis (var. kurstaki) aplicado sobre las hojas tiernas cuando la oruga es joven.",
+    "ORUGAS": "Recogida manual en ataques iniciales. Tratamiento biológico highly efectivo con Bacillus thuringiensis (var. kurstaki) aplicado sobre las hojas tiernas cuando la oruga es joven.",
     "ARAÑA ROJA": "Aumentar la humedad ambiental pulverizando agua. Aplicar azufre mojable o tratamientos con aceite parafinado. En control biológico, introducir el ácaro depredador Phytoseiulus persimilis.",
     "VIRUS": "No existe tratamiento curativo. Se debe arrancar y destruir la planta afectada inmediatamente para evitar el contagio. Es fundamental controlar las plagas de pulgón o mosca blanca, que actúan como vectores.",
     "MILDIU PULVERULENTO": "Eliminar y quemar restos afectados. Aplicar fungicidas a base de azufre, bicarbonato potásico o tratamientos preventivos con cola de caballo. Mejorar la aireación de la planta.",
@@ -153,7 +163,7 @@ with col1:
     if st.checkbox("¿La planta ya no florece?", key=f"h19_{rk}"): diagnosticos_detectados["FALTA DE POTASIO"] = "FALTA DE POTASIO"
     
     st.button("🧹 Limpiar Selección", key="btn_h_limpiar", on_click=limpiar_casillas, use_container_width=True)
-    render_boton_subir()
+    st.markdown('<a href="#inicio" class="btn-subir">⬆️ Ir Arriba</a>', unsafe_allow_html=True)
 
 with col2:
     st.markdown('<div id="sintomas-tallos"></div>', unsafe_allow_html=True)
@@ -168,7 +178,7 @@ with col2:
     if st.checkbox("¿Hay gotas de líquido marrón en los tallos?", key=f"t7_{rk}"): diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
     
     st.button("🧹 Limpiar Selección", key="btn_t_limpiar", on_click=limpiar_casillas, use_container_width=True)
-    render_boton_subir()
+    st.markdown('<a href="#inicio" class="btn-subir">⬆️ Ir Arriba</a>', unsafe_allow_html=True)
 
 with col3:
     st.markdown('<div id="problemas-cultivo"></div>', unsafe_allow_html=True)
@@ -189,7 +199,7 @@ with col3:
     if st.checkbox("¿Afectación general por clima/ubicación?", key=f"c13_{rk}"): diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
     
     st.button("🧹 Limpiar Selección", key="btn_c_limpiar", on_click=limpiar_casillas, use_container_width=True)
-    render_boton_subir()
+    st.markdown('<a href="#inicio" class="btn-subir">⬆️ Ir Arriba</a>', unsafe_allow_html=True)
 
 st.markdown("---")
 st.markdown("## 📋 Panel de Diagnósticos Encontrados")
