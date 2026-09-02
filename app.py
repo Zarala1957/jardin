@@ -1,90 +1,169 @@
 import streamlit as st
 
-st.set_page_config(page_title="Asistente Multidiagnóstico para Jardinería", page_icon="🌱", layout="wide")
+# 1. CONFIGURACIÓN DE PÁGINA Y ESTILOS CSS PERSONALIZADOS
+st.set_page_config(
+    page_title="Asistente Multidiagnóstico para Jardinería",
+    page_icon="🌱",
+    layout="wide"
+)
 
-st.title("🌱 Asistente Multidiagnóstico para Jardinería")
-st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app identificará los problemas y te dará el tratamiento fitosanitario inmediato.")
+st.markdown("""
+<style>
+    /* Ocultar elementos nativos de Streamlit y GitHub */
+    [data-testid="stHeader"] {visibility: hidden;}
+    footer {visibility: hidden;}
+    div[data-testid="stDecoration"] {display: none;}
+    
+    /* Fuentes responsivas para teléfonos móviles */
+    @media (max-width: 768px) {
+        html, body, [data-testid="stMarkdownContainer"] p {
+            font-size: 14px !important;
+        }
+        h1 { font-size: 24px !important; }
+        h2 { font-size: 20px !important; }
+        h3 { font-size: 18px !important; }
+    }
+    
+    /* Estilos personalizados para los paneles de resultados */
+    .recuadro-problema {
+        background-color: #e8f5e9; 
+        padding: 14px; 
+        border-left: 6px solid #2e7d32; 
+        border-radius: 6px; 
+        margin-bottom: 6px;
+    }
+    .recuadro-solucion {
+        background-color: #f3e5f5; 
+        padding: 14px; 
+        border-left: 6px solid #6a1b9a; 
+        border-radius: 6px; 
+        margin-bottom: 24px;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-# Matriz completa de soluciones técnicas oficiales (MF0525_2)
-DICCIONARIO_TRATAMIENTOS = {
-    "PULGÓN": "Tratamiento biológico con jabón potásico (2%) y aceite de neem. En ataques severos, emplear piretrinas naturales o fauna útil (adalia bipunctata). Eliminar brotes muy colapsados.",
-    "CÁPSIDO VERDE COMÚN": "Monitorear las brotaciones. Encontrando adultos, aplicar tratamientos al atardecer con jabón fosfórico o piretroides autorizados. Retirar malas hierbas colindantes.",
-    "ABEJA ASERRADORA": "El daño suele ser puramente estético. No se recomiendan tratamientos químicos drásticos. Colocar barreras físicas o favorecer la biodiversidad para ahuyentarlas.",
-    "BABOSAS / CARACOLES": "Colocar trampas de cerveza o barreras físicas de ceniza/tierra de diatomeas alrededor del tallo. En infestaciones graves, emplear cebos selectivos de fosfato férrico (ecológico).",
-    "GORGOJOS ADULTOS": "Tratamiento nocturno (cuando están activos) sacudiendo las ramas sobre una manta. Aplicar nematodos entomopatógenos en el suelo para controlar las larvas si es necesario.",
-    "ORUGAS": "Recogida manual en ataques iniciales. Tratamiento biológico altamente efectivo con Bacillus thuringiensis (var. kurstaki) aplicado sobre las hojas tiernas cuando la oruga es joven.",
-    "ARAÑA ROJA": "Aumentar la humedad ambiental pulverizando agua (odian la humedad). Aplicar azufre mojable o tratamientos con aceite parafinado. En control biológico, introducir el ácaro depredador Phytoseiulus persimilis.",
-    "MILDIU PULVERULENTO": "Eliminar y quemar restos afectados. Aplicar fungicidas a base de azufre, bicarbonato potásico o tratamientos preventivos con cola de caballo. Mejorar la aireación de la planta.",
-    "BOTRITIS": "Reducir drásticamente la humedad foliar y el riego. Podar partes afectadas con herramientas desinfectadas. Aplicar fungicidas biológicos a base de Bacillus subtilis o cobre en casos graves.",
-    "COCHINILLA": "Limpieza manual con alcohol de quemar y algodón en plantas pequeñas. En ataques generalizados, aplicar aceite de verano combinado con un insecticida sistémico autorizado (ej. deltametrina).",
-    "VIRUS": "No existe tratamiento curativo. Se debe arrancar y destruir la planta afectada inmediatamente para evitar el contagio. Es fundamental controlar las plagas de pulgón o mosca blanca, que actúan como vectores.",
-    "MOSCA BLANCA": "Colocar trampas cromáticas amarillas pegajosas. Tratar con jabón potásico combinado con aceite de neem. En invernaderos, introducir el parasitoide Encarsia formosa.",
-    "EXCESO DE ABONO O LIMITACIÓN DE ESPACIO": "Realizar un lavado de suelo (riego abundante sin encharcar para arrastrar sales). Si la maceta se ha quedado pequeña, programar un trasplante de urgencia a un contenedor mayor.",
-    "QUEMADURA DE LAS HOJAS POR EL VIENTO": "Instalar barreras cortavientos o reubicar la planta a una zona protegida. Incrementar los riegos en días de viento seco para evitar la deshidratación de los bordes.",
-    "FALTA DE NITROGENO / TIERRA ESTÉRIL": "Aportar materia orgánica al suelo (humus de lombriz, compost o estiércol maduro). Aplicar un abonado de fondo rico en Nitrógeno (N) de liberación lenta o quelatos si es urgente.",
-    "SUELO ALCALINO": "Aplicar quelatos de hierro (Fe) directamente al riego para corregir la clorosis férrica. A largo plazo, acidificar el sustrato aportando turba rubia, azufre elemental o agua de riego corregida.",
-    "PODREDUMBRE": "Suspender los riegos de inmediato. Mejorar el drenaje del terreno o maceta aportando perlita o arena. Si afecta a las raíces, aplicar un fungicida específico para cuello (ej. Fosetil-Al).",
-    "DESHOJE NATURAL": "Proceso fisiológico normal en hojas viejas de la zona baja. No requiere acción. Mantener el mantenimiento habitual de la planta retirando las hojas secas caídas.",
-    "PLANTA ESTRESADA": "Evitar mover la planta de sitio constantemente. Suspender el abono hasta que se estabilice. Mantener riegos moderados y estables sin saturar el suelo hasta ver nuevos brotes.",
-    "FALTA DE LUZ NATURAL": "Trasladar la planta de forma progresiva a una ubicación con mayor exposición solar o iluminación indirecta brillante (evitar sol directo de golpe para no quemarla).",
-    "FALTA DE POTASIO": "Aplicar un fertilizante rico en Potasio (K), como sulfato potásico o patasa, especialmente antes y durante la época de floración para fortalecer los tejidos y flores.",
-    "LARVAS DE GORGOJO": "Aplicar nematodos entomopatógenos (Steinernema carpocapsae) al suelo mediante el riego en primavera u otoño para que parasiten las larvas que devoran las raíces.",
-    "QUEMADURA DE LAS HOJAS": "Proporcionar sombreado provisional durante las horas centrales del día. Ajustar la frecuencia de riego para que la planta responda mejor a los picos de calor extremo."
-}
-
-# Estructura de las 3 grandes columnas del libro
-col1, col2, col3 = st.columns(3)
-diagnosticos_detectados = {}
-
-with col1:
-    st.header("🍃 Síntomas en Hojas")
-    if st.checkbox("Las hojas nuevas están deformadas y hay moho oscuro/polvoriento"): diagnosticos_detectados["PULGÓN"] = "PULGÓN"
-    if st.checkbox("Las hojas nuevas están deformadas (sin moho oscuro)"): diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
-    if st.checkbox("Tiene agujeros en los bordes"): diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
-    if st.checkbox("Tiene agujeros regulares en forma semicircular"): diagnosticos_detectados["ABEJA ASERRADORA"] = "ABEJA ASERRADORA"
-    if st.checkbox("Tiene agujeros grandes e irregulares con rastro plateado"): diagnosticos_detectados["BABOSAS / CARACOLES"] = "BABOSAS / CARACOLES"
-    if st.checkbox("Tiene agujeros grandes e irregulares (sin rastro plateado)"): diagnosticos_detectados["GORGOJOS ADULTOS"] = "GORGOJOS ADULTOS"
-    if st.checkbox("Tiene agujeros por toda la hoja (o defoliación masiva)"): diagnosticos_detectados["ORUGAS"] = "ORUGAS"
-    if st.checkbox("Hay agujeros con el borde marrón"): diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
-    if st.checkbox("Hay pequeños insectos y puestas de huevos diminutos"): diagnosticos_detectados["ARAÑA ROJA"] = "ARAÑA ROJA"
-    if st.checkbox("Hay manchas blancas y aterciopeladas"): diagnosticos_detectados["MILDIU PULVERULENTO"] = "MILDIU PULVERULENTO"
-    if st.checkbox("Hay manchas o parches moteados con brotes atrofiados"): diagnosticos_detectados["VIRUS"] = "VIRUS"
-    if st.checkbox("Las hojas jaspeadas se vuelven marrones"): diagnosticos_detectados["FALTA DE LUZ NATURAL"] = "FALTA DE LUZ NATURAL"
-    if st.checkbox("La planta ya no florece"): diagnosticos_detectados["FALTA DE POTASIO"] = "FALTA DE POTASIO"
-
-with col2:
-    st.header("🪵 Síntomas en Tallos")
-    if st.checkbox("Los tallos se marchitan y caen"): diagnosticos_detectados["LARVAS DE GORGOJO"] = "LARVAS DE GORGOJO"
-    if st.checkbox("Los tallos y hojas parecen 'quemados' y totalmente muertos"): diagnosticos_detectados["PODREDUMBRE APICAL"] = "PODREDUMBRE APICAL"
-    if st.checkbox("Los tallos/hojas están dañados/quemados pero la planta sobrevive"): diagnosticos_detectados["QUEMADURA DE LAS HOJAS"] = "QUEMADURA DE LAS HOJAS"
-    if st.checkbox("Hay moho negro y polvoriento en los tallos"): diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
-    if st.checkbox("Hay moho gris y aterciopelado en los tallos"): diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
-    if st.checkbox("Hay gotas de líquido marrón en los tallos"): diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
-
-with col3:
-    st.header("🧪 Problemas de Cultivo")
-    if st.checkbox("Las hojas se vuelven marrones sólo por la punta"): diagnosticos_detectados["EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"] = "EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"
-    if st.checkbox("Las hojas se vuelven marrones por los bordes"): diagnosticos_detectados["QUEMADURA DE LAS HOJAS POR EL VIENTO"] = "QUEMADURA DE LAS HOJAS POR EL VIENTO"
-    if st.checkbox("Las hojas son pálidas y demasiado pequeñas (generalizado)"): diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "FALTA DE NITROGENO / TIERRA ESTÉRIL"
-    if st.checkbox("Las hojas amarillean pero los nervios siguen verdes (Planta ácida)"): diagnosticos_detectados["SUELO ALCALINO"] = "SUELO ALCALINO"
-    if st.checkbox("El suelo está visiblemente anegado o hay podredumbre radicular"): diagnosticos_detectados["PODREDUMBRE"] = "PODREDUMBRE"
-    if st.checkbox("Hojas con caídas y amarilleamiento natural (hojas viejas)"): diagnosticos_detectados["DESHOJE NATURAL"] = "DESHOJE NATURAL"
-    if st.checkbox("La planta ha perdido todas las hojas de golpe tras un cambio"): diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
-    if st.checkbox("Hay grandes manchas o parches con pequeños insectos con forma de polilla"): diagnosticos_detectados["MOSCA BLANCA"] = "MOSCA BLANCA"
-
-# Panel de resultados blindado corregido con 'in' técnico obligatorio
-st.markdown("---")
-st.subheader("📋 Panel de Diagnósticos Encontrados")
-
-if not diagnosticos_detectados:
-    st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
-else:
-    st.success(f"Se han detectado {len(diagnosticos_detectados)} problema(s) simultáneos en la planta:")
-    # CORREGIDO EL 'IN' AQUÍ:
-    for prob, clave in diagnosticos_detectados.items():
-        st.warning(f"🚨 **{prob}**")
-        sol = DICCIONARIO_TRATAMIENTOS.get(clave, "Consulte el cuaderno de campo del Módulo MF0525_2.")
-        st.info(f"🛠️ **Tratamiento:** {sol}")
-
-# Pie de página unificado y limpio con tu firma AGV
-st.markdown("---")
+# 2. BASE DE DATOS DE SÍNTOMAS, PROBLEMAS (VERDES) Y SOLUCIONES (LILA)
+DIAGNOSTICOS_MASTER = {
+    "Hojas": {
+        "Las hojas nuevas están deformadas y hay moho oscuro/polvoriento": {
+            "problema": "Pulgones acompañados de hongo Negrilla u Oídio",
+            "solucion": "Aplicar un tratamiento combinado de jabón potásico seguido de un fungicida a base de cobre o azufre."
+        },
+        "Las hojas nuevas están deformadas (sin moho oscuro)": {
+            "problema": "Ataque temprano de Ácaros o Trips",
+            "solucion": "Tratar la planta pulverizando aceite de neem o un acaricida específico en las horas bajas de sol."
+        },
+        "Tiene agujeros regulares en los bordes": {
+            "problema": "Ataque de Gorgojos de la corteza u Otiorrinco",
+            "solucion": "Realizar tratamientos nocturnos dirigidos o aplicar nematodos beneficiosos al sustrato."
+        },
+        "Tiene agujeros regulares en forma semicircular": {
+            "problema": "Abeja Cortadora de Hojas (Megachile)",
+            "solucion": "Suele ser un daño estético menor. No se requiere un tratamiento químico severo; basta con proteger la planta físicamente."
+        },
+        "Tiene agujeros grandes o irregulares con rastro plateado": {
+            "problema": "Presencia de Caracoles o Babosas",
+            "solucion": "Instalar trampas de cerveza a ras de suelo o esparcir gránulos ecológicos de fosfato férrico."
+        },
+        "Tiene agujeros grandes e irregulares (sin rastro plateado)": {
+            "problema": "Infestación por Orugas Defoliadoras",
+            "solucion": "Pulverizar las hojas con Bacillus thuringiensis de forma foliar mojando bien el envés."
+        },
+        "Tiene agujeros por toda la hoja (o defoliación masiva)": {
+            "problema": "Plaga severa de Escarabajos adultos o Larvas gregarias",
+            "solucion": "Retirar manualmente los ejemplares visibles y aplicar pulverizaciones con piretrinas naturales."
+        },
+        "Hay agujeros con el borde marrón": {
+            "problema": "Antracnosis o Infección Fúngica foliar localizada",
+            "solucion": "Podar y retirar inmediatamente las hojas afectadas y aplicar un fungicida sistémico de amplio espectro."
+        },
+        "Hay pequeños insectos y puestas de huevos diminutos": {
+            "problema": "Presencia activa e infestación de Mosca Blanca o Araña Roja",
+            "solucion": "Colocar trampas cromáticas adhesivas de color amarillo e iniciar lavados semanales con jabón potásico."
+        },
+        "Hay manchas blancas y aterciopeladas": {
+            "problema": "Aparición de Mildiu u Oídio foliar",
+            "solucion": "Aumentar la separación entre plantas para mejorar la ventilación y realizar tratamientos con azufre soluble."
+        },
+        "Hay manchas o parches moteados con brotes atrofiados": {
+            "problema": "Infección por el Virus del Mosaico",
+            "solucion": "Esta patología no tiene cura. Es necesario aislar de inmediato o desechar la planta para evitar contagios a ejemplares sanos."
+        },
+        "Las hojas jaspeadas se vuelven marrones": {
+            "problema": "Carencia nutricional severa de elementos clave (como Magnesio o Potasio)",
+            "solucion": "Incorporar al agua de riego un fertilizante corrector de carencias rico en microelementos."
+        },
+        "La planta ya no florece": {
+            "problema": "Exceso de Nitrógeno en el suelo o falta severa de Fósforo y Luz",
+            "solucion": "Suspender los abonos nitrogenados, cambiar a un fertilizante alto en Fósforo y Potasio, y reubicar a una zona más soleada."
+        },
+        "Las hojas inferiores amarillean y terminan cayéndose": {
+            "problema": "Clorosis por Exceso Continuo de Riego o Falta de Nitrógeno",
+            "solucion": "Espaciar de inmediato los riegos permitiendo secar el sustrato y aplicar un fertilizante nitrogenado ligero."
+        },
+        "Aparición de costras marrones o masas algodonosas adheridas": {
+            "problema": "Infestación por Cochinilla (Parda o Algodonosa)",
+            "solucion": "Limpiar los tallos y hojas con un algodón empapado en alcohol e impregnar la planta con aceite de neem."
+        },
+        "Hojas con las puntas completamente quemadas y secas": {
+            "problema": "Estrés hídrico crítico o exceso acumulado de sales/fertilizantes",
+            "solucion": "Efectuar un lavado profundo de raíces regando con abundante agua limpia y suspender el abono durante un mes."
+        },
+        "Manchas circulares concéntricas de color café oscuro": {
+            "problema": "Alternaria (Hongo de la mancha de la hoja)",
+            "solucion": "Retirar y destruir los restos vegetales afectados y realizar una aplicación foliar de fungicida orgánico."
+        },
+        "Hojas pálidas acompañadas de finas telarañas en el envés": {
+            "problema": "Plaga latente de Araña Roja (Tetraníquidos)",
+            "solucion": "Elevar la humedad ambiental mediante pulverizaciones constantes de agua limpia y aplicar un acaricida selectivo."
+        },
+        "Las hojas toman un color verde oscuro opaco y tintes purpúreos": {
+            "problema": "Deficiencia crítica de Fósforo asimilable",
+            "solucion": "Enmendar el suelo añadiendo harina de huesos o aplicando un abono líquido específico rico en Fósforo."
+        }
+    },
+    "Tallos": {
+        "Los tallos se marchitan y caen": {
+            "problema": "Damping-off o Caída fúngica de plántulas",
+            "solucion": "Reducir la humedad drásticamente, optimizar el drenaje del semillero y aplicar un fungicida protector en el sustrato."
+        },
+        "Los tallos y hojas parecen 'quemados' y totalmente muertos": {
+            "problema": "Ataque severo de Fuego Bacteriano o Fitóftora",
+            "solucion": "Ejecutar una poda drástica eliminando todo el tejido dañado y desinfectar escrupulosamente las herramientas de corte entre pasadas."
+        },
+        "Los tallos/hojas están dañados/quemados pero la planta sobrevive": {
+            "problema": "Fisiopatía debida a una Helada Temprana o Quemadura Solar directa",
+            "solucion": "Cubrir el cultivo con una manta térmica protectora por las noches o trasladar temporalmente a semisombra."
+        },
+        "Hay moho negro y polvoriento en los tallos": {
+            "problema": "Fumagina (Hongo de la Negrilla) asentado sobre melaza",
+            "solucion": "Identificar y eliminar primero la plaga causante de la melaza (como pulgones o cochinillas) usando jabón potásico."
+        },
+        "Hay moho grey y aterciopelado en los tallos": {
+            "problema": "Botritis (Podredumbre gris del tallo)",
+            "solucion": "Cortar de inmediato las zonas afectadas del tallo, disminuir la humedad ambiental y pulverizar un fungicida específico anti-botritis."
+        },
+        "Hay gotas de líquido marrón en los tallos": {
+            "problema": "Chancro bacteriano o desarrollo de Gomosis",
+            "solucion": "Sanear la herida del tallo raspando suavemente hasta el tejido sano y sellar aplicando pasta cicatrizante con base de cobre."
+        },
+        "El tallo principal se vuelve blando, flácido y oscuro en la base": {
+            "problema": "Podredumbre del cuello de la raíz (Rhizoctonia o Pythium)",
+            "solucion": "Suspender los riegos de forma inmediata, mejorar la aireación del suelo y aplicar un fungicida sistémico radicular."
+        }
+    },
+    "Cultivo": {
+        "Las hojas se vuelven marrones sólo por la punta": {
+            "problema": "Entorno con aire extremadamente seco o exposición a corrientes fuertes",
+            "solucion": "Elevar la humedad ambiental alrededor de la planta mediante recipientes con agua o usando un humidificador."
+        },
+        "Las hojas se vuelven marrones por los bordes": {
+            "problema": "Acumulación tóxica de cloro o sales minerales procedentes del agua de red",
+            "solucion": "Utilizar agua de lluvia para el riego o permitir que el agua del grifo repose en un contenedor abierto durante 24 horas."
+        },
+        "Las hojas son pálidas y demasiado pequeñas (generalizado)": {
+            "problema": "Carencia generalizada de macronutrientes o iluminación deficiente",
+            "solucion": "Aportar nutrientes orgánicos como humus de lombriz al sustrato y mover la planta hacia una ubicación con mejor luz."
+        },
+        "Las hojas amarillean pero los nervios siguen verdes (Planta ácida)": {
+            "problema": "Clorosis Férrica por bloqueo de Hierro debido a pH inadecuado",
