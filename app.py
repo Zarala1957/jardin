@@ -7,14 +7,44 @@ st.set_page_config(
     layout="wide"
 )
 
-# CSS Inyectado para solución de cuestiones de UI/UX Móvil
+# CSS Inyectado para solución de cuestiones de UI/UX Móvil y ocultación estricta de menús
 st.markdown("""
     <style>
-    /* 1. Ocultar menús nativos de Streamlit y GitHub */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    .stDeployButton {display:none;}
+    /* 1 y 7. Ocultar de forma estricta cabeceras, botones de deploy y marcas de Streamlit/GitHub */
+    #MainMenu {visibility: hidden; display: none !important;}
+    footer {visibility: hidden; display: none !important;}
+    header {visibility: hidden; display: none !important;}
+    .stDeployButton {display: none !important;}
+    .stAppDeployButton {display: none !important;}
+    [data-testid="stHeader"] {display: none !important;}
+    [data-testid="stToolbar"] {display: none !important;}
+
+    /* Contenedor responsivo para el menú de navegación rápida */
+    .menu-rapido-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        background-color: #f0f2f6;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .menu-btn {
+        background-color: #ffffff;
+        color: #262730;
+        border: 1px solid #d6d6d6;
+        padding: 6px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.9rem;
+        display: inline-block;
+    }
+    .menu-btn:hover {
+        background-color: #e2e8f0;
+    }
 
     /* 3. Ajuste responsivo de fuentes para dispositivos móviles */
     @media (max-width: 768px) {
@@ -22,17 +52,17 @@ st.markdown("""
             font-size: 14px !important;
         }
         h1 {
-            font-size: 1.6rem !important;
+            font-size: 1.5rem !important;
         }
         h2 {
-            font-size: 1.3rem !important;
+            font-size: 1.2rem !important;
         }
         .stCheckbox label p {
-            font-size: 0.9rem !important;
+            font-size: 0.88rem !important;
         }
     }
 
-    /* Anclas suaves para navegación en móvil */
+    /* Desplazamiento suave para anclas */
     html {
         scroll-behavior: smooth;
     }
@@ -51,21 +81,20 @@ def reiniciar_app():
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app identificará los problemas y te dará el tratamiento fitosanitario inmediato.")
 
-# 5. Botón de Reset para reiniciar el formulario en cualquier momento
+# Botón de Reset para reiniciar el formulario
 if st.button("🔄 Reiniciar / Limpiar Selección", on_click=reiniciar_app):
     pass
 
-# 4. Enlaces de navegación rápida (Anclas) para optimizar la visualización en pantallas móviles
+# 4. Enlaces de navegación rápida corregidos con Flexbox responsivo para móvil
 st.markdown("""
-<div style="background-color: #f0f2f6; padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-    <strong>Navegación rápida:</strong> 
-    <a href="#sintomas-hojas" style="margin: 0 10px; text-decoration: none;">🍃 Hojas</a> | 
-    <a href="#sintomas-tallos" style="margin: 0 10px; text-decoration: none;">🪵 Tallos</a> | 
-    <a href="#problemas-cultivo" style="margin: 0 10px; text-decoration: none;">🧪 Cultivo</a>
+<div class="menu-rapido-container">
+    <a href="#sintomas-hojas" class="menu-btn">🍃 Hojas</a>
+    <a href="#sintomas-tallos" class="menu-btn">🪵 Tallos</a>
+    <a href="#problemas-cultivo" class="menu-btn">🧪 Cultivo</a>
 </div>
 """, unsafe_allow_html=True)
 
-# Matriz completa de soluciones técnicas oficiales
+# Matriz completa de soluciones técnicas
 DICCIONARIO_TRATAMIENTOS = {
     # Hojas
     "PULGÓN": "Tratamiento biológico con jabón potásico (2%) y aceite de neem. En ataques severos, emplear piretrinas naturales o fauna útil (Adalia bipunctata). Eliminar brotes muy colapsados.",
