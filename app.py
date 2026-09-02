@@ -6,28 +6,37 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS optimizados
+# Estilos CSS de alta precisión para eliminar menú flotante y ajustar márgenes
 st.markdown("""
     <style>
+    /* Ocultación radical de la interfaz predeterminada de Streamlit */
     #MainMenu {visibility: hidden !important; display: none !important;}
-    footer {visibility: hidden !important; display: none !important;}
     header {visibility: hidden !important; display: none !important;}
-    [data-testid="stHeader"] {display: none !important;}
-    [data-testid="stToolbar"] {display: none !important;}
-    [data-testid="stDecoration"] {display: none !important;}
-    [data-testid="stStatusWidget"] {display: none !important;}
+    footer {visibility: hidden !important; display: none !important;}
+    
+    /* Selectores específicos del DOM de React para evitar que el menú flotante salte */
+    div[data-testid="stHeader"] {display: none !important;}
+    div[data-testid="stToolbar"] {display: none !important;}
+    div[data-testid="stDecoration"] {display: none !important;}
+    div[data-testid="stStatusWidget"] {display: none !important;}
+    button[title="View app in fullscreen"] {display: none !important;}
     .stAppDeployButton {display: none !important;}
     [data-testid="stNotification"], div.stAlert {display: none !important;}
 
+    /* Optimización del espacio superior */
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 1rem !important;
+        margin-top: -25px !important; /* Absorbe el espacio en blanco de la barra oculta */
     }
+    
     h1 {
         padding-top: 0rem !important;
         margin-top: 0rem !important;
         margin-bottom: 0.5rem !important;
     }
+
+    /* Estilizado del menú rápido superior */
     .menu-rapido-container {
         display: flex;
         flex-wrap: wrap;
@@ -50,7 +59,14 @@ st.markdown("""
         font-weight: bold;
         font-size: 0.9rem;
         display: inline-block;
+        transition: all 0.2s ease-in-out;
     }
+    .menu-btn:hover {
+        background-color: #e0e2e6;
+        border-color: #b0b0b0;
+    }
+
+    /* Estilizado del botón de desplazamiento hacia arriba */
     .btn-subir {
         display: block;
         width: 100%;
@@ -62,37 +78,46 @@ st.markdown("""
         font-weight: bold;
         text-decoration: none;
         font-size: 0.9rem;
-        margin-top: 6px;
+        margin-top: 8px;
         border: 1px solid #4F4F4F;
+        transition: background-color 0.2s ease-in-out;
     }
     .btn-subir:hover {
         background-color: #262730;
         color: #FFFFFF !important;
     }
+
+    /* Responsividad para dispositivos móviles */
     @media (max-width: 768px) {
-        .block-container { padding-top: 0.5rem !important; }
+        .block-container { 
+            padding-top: 0.5rem !important; 
+            margin-top: -15px !important;
+        }
         html, body, [class*="css"] { font-size: 14px !important; }
         h1 { font-size: 1.4rem !important; }
         h2 { font-size: 1.15rem !important; }
         .stCheckbox label p { font-size: 0.88rem !important; }
     }
+
+    /* Desplazamiento suave para los anclas de navegación */
     html { scroll-behavior: smooth; }
     </style>
 """, unsafe_allow_html=True)
 
-# Control de reinicio de casillas
+# Gestor de estado para el reinicio de las casillas de verificación
 if "reset_key" not in st.session_state:
     st.session_state.reset_key = 0
 
 def limpiar_casillas():
     st.session_state.reset_key += 1
 
-# Ancla de destino superior para el botón
+# Ancla HTML pura para la redirección al inicio de la página
 st.markdown('<div id="inicio"></div>', unsafe_allow_html=True)
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta para obtener el tratamiento fitosanitario inmediato.")
 
+# Menú dinámico de salto rápido
 st.markdown("""
 <div class="menu-rapido-container">
     <a href="#sintomas-hojas" class="menu-btn">🍃 Hojas</a>
@@ -101,6 +126,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Base de datos de tratamientos fitosanitarios
 DICCIONARIO_TRATAMIENTOS = {
     # Hojas
     "PULGÓN": "Tratamiento biológico con jabón potásico (2%) y aceite de neem. En ataques severos, emplear piretrinas naturales o fauna útil (Adalia bipunctata). Eliminar brotes muy colapsados.",
@@ -108,7 +134,7 @@ DICCIONARIO_TRATAMIENTOS = {
     "ABEJA ASERRADORA": "El daño suele ser puramente estético. No se recomiendan tratamientos químicos drásticos. Colocar barreras físicas o favorecer la biodiversidad para ahuyentarlas.",
     "GORGOJOS ADULTOS": "Tratamiento nocturno (cuando están activos) sacudiendo las ramas sobre una manta. Aplicar nematodos entomopatógenos en el suelo para controlar las larvas si es necesario.",
     "BABOSAS / CARACOLES": "Colocar trampas de cerveza o barreras físicas de ceniza/tierra de diatomeas alrededor del tallo. En infestaciones graves, emplear cebos selectivos de fosfato férrico (ecológico).",
-    "ORUGAS": "Recogida manual en ataques iniciales. Tratamiento biológico highly efectivo con Bacillus thuringiensis (var. kurstaki) aplicado sobre las hojas tiernas cuando la oruga es joven.",
+    "ORUGAS": "Recogida manual en ataques iniciales. Tratamiento biológico altamente efectivo con Bacillus thuringiensis (var. kurstaki) aplicado sobre las hojas tiernas cuando la oruga es joven.",
     "ARAÑA ROJA": "Aumentar la humedad ambiental pulverizando agua. Aplicar azufre mojable o tratamientos con aceite parafinado. En control biológico, introducir el ácaro depredador Phytoseiulus persimilis.",
     "VIRUS": "No existe tratamiento curativo. Se debe arrancar y destruir la planta afectada inmediatamente para evitar el contagio. Es fundamental controlar las plagas de pulgón o mosca blanca, que actúan como vectores.",
     "MILDIU PULVERULENTO": "Eliminar y quemar restos afectados. Aplicar fungicidas a base de azufre, bicarbonato potásico o tratamientos preventivos con cola de caballo. Mejorar la aireación de la planta.",
