@@ -211,4 +211,4 @@ else:
         st.info(f"🛠️ **Tratamiento recomendado:** {sol}")
 
 st.markdown("---")
-st.caption("Asistente técnico fitosanitario — Módulo MF0525_2 | AGV")
+st.caption("© 2026 www.jardineriaypaisajismo.com")
