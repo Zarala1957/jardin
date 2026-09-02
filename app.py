@@ -1,16 +1,14 @@
 import streamlit as st
 
-# Configuración de página optimizada
 st.set_page_config(
     page_title="Asistente Multidiagnóstico para Jardinería", 
     page_icon="🌱", 
     layout="wide"
 )
 
-# CSS Inyectado para solución completa de UI/UX, márgenes y eliminación del botón flotante
+# Estilos CSS optimizados para móvil y supresión de avisos del sistema
 st.markdown("""
     <style>
-    /* 1. Ocultar menú superior, cabecera y barra de herramientas de Streamlit */
     #MainMenu {visibility: hidden !important; display: none !important;}
     footer {visibility: hidden !important; display: none !important;}
     header {visibility: hidden !important; display: none !important;}
@@ -18,28 +16,18 @@ st.markdown("""
     [data-testid="stToolbar"] {display: none !important;}
     [data-testid="stDecoration"] {display: none !important;}
     [data-testid="stStatusWidget"] {display: none !important;}
-    
-    /* 2. Ocultar el botón flotante rojo/badge inferior derecho (Streamlit Cloud Badge) */
-    .viewerBadge_container__1s5nd {display: none !important;}
-    .viewerBadge_link__1S137 {display: none !important;}
-    [data-testid="stViewerBadge"] {display: none !important;}
-    div[class*="viewerBadge"] {display: none !important;}
-    a[href*="streamlit.io"] {display: none !important;}
     .stAppDeployButton {display: none !important;}
-    
-    /* 3. Reducción de padding superior y márgenes del título */
+    [data-testid="stNotification"], div.stAlert {display: none !important;}
+
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 1rem !important;
-        margin-top: 0rem !important;
     }
     h1 {
         padding-top: 0rem !important;
         margin-top: 0rem !important;
         margin-bottom: 0.5rem !important;
     }
-
-    /* Contenedor responsivo para el menú de navegación rápida */
     .menu-rapido-container {
         display: flex;
         flex-wrap: wrap;
@@ -63,47 +51,39 @@ st.markdown("""
         font-size: 0.9rem;
         display: inline-block;
     }
-    .menu-btn:hover {
-        background-color: #e2e8f0;
-    }
-
-    /* 4. Ajustes visuales para pantallas móviles */
     @media (max-width: 768px) {
-        .block-container {
-            padding-top: 0.5rem !important;
-        }
-        html, body, [class*="css"] {
-            font-size: 14px !important;
-        }
+        .block-container { padding-top: 0.5rem !important; }
+        html, body, [class*="css"] { font-size: 14px !important; }
         h1 { font-size: 1.4rem !important; }
         h2 { font-size: 1.15rem !important; }
         .stCheckbox label p { font-size: 0.88rem !important; }
     }
-
-    /* Desplazamiento suave para anclas */
-    html {
-        scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
     </style>
 """, unsafe_allow_html=True)
 
-# Manejo de estado para el botón de Reset
+# Inicializar estados de control
 if "reset_key" not in st.session_state:
     st.session_state.reset_key = 0
+if "hacer_scroll" not in st.session_state:
+    st.session_state.hacer_scroll = False
 
-def reiniciar_app():
+# Si se ha pulsado un botón de reset, ejecutar el scroll en el flujo principal
+if st.session_state.hacer_scroll:
+    st.components.v1.html("""
+        <script>
+            window.parent.scrollTo({top: 0, behavior: 'smooth'});
+        </script>
+    """, height=0)
+    st.session_state.hacer_scroll = False
+
+def solicitar_reset():
     st.session_state.reset_key += 1
-    st.rerun()
+    st.session_state.hacer_scroll = True
 
-# Encabezado principal
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
-st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app identificará los problemas y te dará el tratamiento fitosanitario inmediato.")
+st.write("Selecciona **todos los síntomas** que observes en la planta para obtener el tratamiento fitosanitario inmediato.")
 
-# Botón de Reset para reiniciar el formulario
-if st.button("🔄 Reiniciar / Limpiar Selección", on_click=reiniciar_app):
-    pass
-
-# Enlaces de navegación rápida responsivos
 st.markdown("""
 <div class="menu-rapido-container">
     <a href="#sintomas-hojas" class="menu-btn">🍃 Hojas</a>
@@ -112,7 +92,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Matriz completa de soluciones técnicas
 DICCIONARIO_TRATAMIENTOS = {
     # Hojas
     "PULGÓN": "Tratamiento biológico con jabón potásico (2%) y aceite de neem. En ataques severos, emplear piretrinas naturales o fauna útil (Adalia bipunctata). Eliminar brotes muy colapsados.",
@@ -146,7 +125,6 @@ DICCIONARIO_TRATAMIENTOS = {
     "FALTA DE POTASIO": "Aplicar un fertilizante rico en Potasio (K), como sulfato potásico o patasa, especialmente antes y durante la época de floración para fortalecer los tejidos."
 }
 
-# Estructura en tres columnas principales
 col1, col2, col3 = st.columns(3)
 diagnosticos_detectados = {}
 rk = st.session_state.reset_key
@@ -155,107 +133,74 @@ with col1:
     st.markdown('<div id="sintomas-hojas"></div>', unsafe_allow_html=True)
     st.header("🍃 Síntomas en Hojas")
     
-    if st.checkbox("¿Las hojas nuevas están deformadas y hay moho oscuro sobre ellas?", key=f"h1_{rk}"): 
-        diagnosticos_detectados["PULGÓN"] = "PULGÓN"
-    if st.checkbox("¿Las hojas nuevas están deformadas (sin moho)?", key=f"h2_{rk}"): 
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
-    if st.checkbox("¿Los bordes son la parte más afectada de la hoja?", key=f"h3_{rk}"): 
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
-    if st.checkbox("¿Los agujeros son regulares y en forma semicircular?", key=f"h4_{rk}"): 
-        diagnosticos_detectados["ABEJA ASERRADORA"] = "ABEJA ASERRADORA"
-    if st.checkbox("¿Son agujeros grandes e irregulares con rastro plateado?", key=f"h5_{rk}"): 
-        diagnosticos_detectados["BABOSAS / CARACOLES"] = "BABOSAS / CARACOLES"
-    if st.checkbox("¿Son agujeros grandes e irregulares (sin rastro plateado)?", key=f"h6_{rk}"): 
-        diagnosticos_detectados["GORGOJOS ADULTOS"] = "GORGOJOS ADULTOS"
-    if st.checkbox("¿Hay agujeros por toda la hoja?", key=f"h7_{rk}"): 
-        diagnosticos_detectados["ORUGAS"] = "ORUGAS"
-    if st.checkbox("¿Hay agujeros con el borde marrón?", key=f"h8_{rk}"): 
-        diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
-    if st.checkbox("¿Hay pequeños insectos y puestas de huevos diminutos?", key=f"h9_{rk}"): 
-        diagnosticos_detectados["ARAÑA ROJA"] = "ARAÑA ROJA"
-    if st.checkbox("¿Hay brotes atrofiados o deformados?", key=f"h10_{rk}"): 
-        diagnosticos_detectados["VIRUS"] = "VIRUS"
-    if st.checkbox("¿Las hojas están moteadas o tienen manchas?", key=f"h11_{rk}"): 
-        diagnosticos_detectados["VIRUS"] = "VIRUS"
-    if st.checkbox("¿Hay manchas en las hojas?", key=f"h12_{rk}"): 
-        diagnosticos_detectados["VIRUS"] = "VIRUS"
-    if st.checkbox("¿Las hojas tienen grandes manchas o parches?", key=f"h13_{rk}"): 
-        diagnosticos_detectados["MOSCA BLANCA"] = "MOSCA BLANCA"
-    if st.checkbox("¿Hay un moho negro y polvoriento en las hojas?", key=f"h14_{rk}"): 
-        diagnosticos_detectados["PULGÓN"] = "PULGÓN"
-    if st.checkbox("¿Hay manchas blancas y aterciopeladas?", key=f"h15_{rk}"): 
-        diagnosticos_detectados["MILDIU PULVERULENTO"] = "MILDIU PULVERULENTO"
-    if st.checkbox("¿Hay un moho gris y aterciopelado en las hojas?", key=f"h16_{rk}"): 
-        diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
-    if st.checkbox("¿Hay pequeños insectos con forma de polilla sobre las hojas?", key=f"h17_{rk}"): 
-        diagnosticos_detectados["MOSCA BLANCA"] = "MOSCA BLANCA"
-    if st.checkbox("¿Las hojas jaspeadas se vuelven marrones?", key=f"h18_{rk}"): 
-        diagnosticos_detectados["FALTA DE LUZ NATURAL"] = "FALTA DE LUZ NATURAL"
-    if st.checkbox("¿La planta ya no florece?", key=f"h19_{rk}"): 
-        diagnosticos_detectados["FALTA DE POTASIO"] = "FALTA DE POTASIO"
+    if st.checkbox("¿Las hojas nuevas están deformadas y hay moho oscuro sobre ellas?", key=f"h1_{rk}"): diagnosticos_detectados["PULGÓN"] = "PULGÓN"
+    if st.checkbox("¿Las hojas nuevas están deformadas (sin moho)?", key=f"h2_{rk}"): diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
+    if st.checkbox("¿Los bordes son la parte más afectada de la hoja?", key=f"h3_{rk}"): diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
+    if st.checkbox("¿Los agujeros son regulares y en forma semicircular?", key=f"h4_{rk}"): diagnosticos_detectados["ABEJA ASERRADORA"] = "ABEJA ASERRADORA"
+    if st.checkbox("¿Son agujeros grandes e irregulares con rastro plateado?", key=f"h5_{rk}"): diagnosticos_detectados["BABOSAS / CARACOLES"] = "BABOSAS / CARACOLES"
+    if st.checkbox("¿Son agujeros grandes e irregulares (sin rastro plateado)?", key=f"h6_{rk}"): diagnosticos_detectados["GORGOJOS ADULTOS"] = "GORGOJOS ADULTOS"
+    if st.checkbox("¿Hay agujeros por toda la hoja?", key=f"h7_{rk}"): diagnosticos_detectados["ORUGAS"] = "ORUGAS"
+    if st.checkbox("¿Hay agujeros con el borde marrón?", key=f"h8_{rk}"): diagnosticos_detectados["CÁPSIDO VERDE COMÚN"] = "CÁPSIDO VERDE COMÚN"
+    if st.checkbox("¿Hay pequeños insectos y puestas de huevos diminutos?", key=f"h9_{rk}"): diagnosticos_detectados["ARAÑA ROJA"] = "ARAÑA ROJA"
+    if st.checkbox("¿Hay brotes atrofiados o deformados?", key=f"h10_{rk}"): diagnosticos_detectados["VIRUS"] = "VIRUS"
+    if st.checkbox("¿Las hojas están moteadas o tienen manchas?", key=f"h11_{rk}"): diagnosticos_detectados["VIRUS"] = "VIRUS"
+    if st.checkbox("¿Hay manchas en las hojas?", key=f"h12_{rk}"): diagnosticos_detectados["VIRUS"] = "VIRUS"
+    if st.checkbox("¿Las hojas tienen grandes manchas o parches?", key=f"h13_{rk}"): diagnosticos_detectados["MOSCA BLANCA"] = "MOSCA BLANCA"
+    if st.checkbox("¿Hay un moho negro y polvoriento en las hojas?", key=f"h14_{rk}"): diagnosticos_detectados["PULGÓN"] = "PULGÓN"
+    if st.checkbox("¿Hay manchas blancas y aterciopeladas?", key=f"h15_{rk}"): diagnosticos_detectados["MILDIU PULVERULENTO"] = "MILDIU PULVERULENTO"
+    if st.checkbox("¿Hay un moho gris y aterciopelado en las hojas?", key=f"h16_{rk}"): diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
+    if st.checkbox("¿Hay pequeños insectos con forma de polilla sobre las hojas?", key=f"h17_{rk}"): diagnosticos_detectados["MOSCA BLANCA"] = "MOSCA BLANCA"
+    if st.checkbox("¿Las hojas jaspeadas se vuelven marrones?", key=f"h18_{rk}"): diagnosticos_detectados["FALTA DE LUZ NATURAL"] = "FALTA DE LUZ NATURAL"
+    if st.checkbox("¿La planta ya no florece?", key=f"h19_{rk}"): diagnosticos_detectados["FALTA DE POTASIO"] = "FALTA DE POTASIO"
+    
+    st.button("🔄 Limpiar e Ir Arriba", key="btn_h", on_click=solicitar_reset)
 
 with col2:
     st.markdown('<div id="sintomas-tallos"></div>', unsafe_allow_html=True)
     st.header("🪵 Síntomas en Tallos")
     
-    if st.checkbox("¿Los tallos se marchitan y caen?", key=f"t1_{rk}"): 
-        diagnosticos_detectados["LARVAS DE GORGOJO"] = "LARVAS DE GORGOJO"
-    if st.checkbox("¿Los tallos están secándose?", key=f"t2_{rk}"): 
-        diagnosticos_detectados["PODREDUMBRE APICAL"] = "PODREDUMBRE APICAL"
-    if st.checkbox("¿Parece que los tallos y las hojas están quemados/muertos?", key=f"t3_{rk}"): 
-        diagnosticos_detectados["PODREDUMBRE APICAL"] = "PODREDUMBRE APICAL"
-    if st.checkbox("¿Los tallos y hojas están dañados pero la planta sobrevive?", key=f"t4_{rk}"): 
-        diagnosticos_detectados["QUEMADURA DE LAS HOJAS"] = "QUEMADURA DE LAS HOJAS"
-    if st.checkbox("¿Hay moho en los tallos (negro/polvoriento)?", key=f"t5_{rk}"): 
-        diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
-    if st.checkbox("¿Hay moho en los tallos (gris/aterciopelado)?", key=f"t6_{rk}"): 
-        diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
-    if st.checkbox("¿Hay gotas de líquido marrón en los tallos?", key=f"t7_{rk}"): 
-        diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
+    if st.checkbox("¿Los tallos se marchitan y caen?", key=f"t1_{rk}"): diagnosticos_detectados["LARVAS DE GORGOJO"] = "LARVAS DE GORGOJO"
+    if st.checkbox("¿Los tallos están secándose?", key=f"t2_{rk}"): diagnosticos_detectados["PODREDUMBRE APICAL"] = "PODREDUMBRE APICAL"
+    if st.checkbox("¿Parece que los tallos y las hojas están quemados/muertos?", key=f"t3_{rk}"): diagnosticos_detectados["PODREDUMBRE APICAL"] = "PODREDUMBRE APICAL"
+    if st.checkbox("¿Los tallos y hojas están dañados pero la planta sobrevive?", key=f"t4_{rk}"): diagnosticos_detectados["QUEMADURA DE LAS HOJAS"] = "QUEMADURA DE LAS HOJAS"
+    if st.checkbox("¿Hay moho en los tallos (negro/polvoriento)?", key=f"t5_{rk}"): diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
+    if st.checkbox("¿Hay moho en los tallos (gris/aterciopelado)?", key=f"t6_{rk}"): diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
+    if st.checkbox("¿Hay gotas de líquido marrón en los tallos?", key=f"t7_{rk}"): diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
+    
+    st.button("🔄 Limpiar e Ir Arriba", key="btn_t", on_click=solicitar_reset)
 
 with col3:
     st.markdown('<div id="problemas-cultivo"></div>', unsafe_allow_html=True)
     st.header("🧪 Problemas de Cultivo")
     
-    if st.checkbox("¿Las hojas se vuelven marrones sólo por la punta?", key=f"c1_{rk}"): 
-        diagnosticos_detectados["EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"] = "EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"
-    if st.checkbox("¿Las hojas se vuelven marrones por los bordes?", key=f"c2_{rk}"): 
-        diagnosticos_detectados["QUEMADURA DE LAS HOJAS POR EL VIENTO"] = "QUEMADURA DE LAS HOJAS POR EL VIENTO"
-    if st.checkbox("¿Las hojas se vuelven amarillas y es una planta ácida?", key=f"c3_{rk}"): 
-        diagnosticos_detectados["SUELO ALCALINO"] = "SUELO ALCALINO"
-    if st.checkbox("¿El suelo de la planta está anegado?", key=f"c4_{rk}"): 
-        diagnosticos_detectados["PODREDUMBRE"] = "PODREDUMBRE"
-    if st.checkbox("¿Las hojas son pálidas y demasiado pequeñas?", key=f"c5_{rk}"): 
-        diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "FALTA DE NITROGENO / TIERRA ESTÉRIL"
-    if st.checkbox("¿Las hojas se caen tras volverse amarillas?", key=f"c6_{rk}"): 
-        diagnosticos_detectados["DESHOJE NATURAL"] = "DESHOJE NATURAL"
-    if st.checkbox("¿Primero se vuelven amarillas las hojas inferiores?", key=f"c7_{rk}"): 
-        diagnosticos_detectados["DESHOJE NATURAL"] = "DESHOJE NATURAL"
-    if st.checkbox("¿Primero se vuelven marrones las hojas?", key=f"c8_{rk}"): 
-        diagnosticos_detectados["EXCESO DE AGUA"] = "EXCESO DE AGUA"
-    if st.checkbox("¿La planta ha perdido todas las hojas de golpe?", key=f"c9_{rk}"): 
-        diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
-    if st.checkbox("¿Las hojas jaspeadas se vuelven marrones?", key=f"c10_{rk}"): 
-        diagnosticos_detectados["FALTA DE LUZ NATURAL"] = "FALTA DE LUZ NATURAL"
-    if st.checkbox("¿La planta ya no florece?", key=f"c11_{rk}"): 
-        diagnosticos_detectados["FALTA DE POTASIO"] = "FALTA DE POTASIO"
-    if st.checkbox("¿Tierra estéril o falta de nutrientes generalizada?", key=f"c12_{rk}"): 
-        diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "FALTA DE NITROGENO / TIERRA ESTÉRIL"
-    if st.checkbox("¿Afectación general por clima/ubicación?", key=f"c13_{rk}"): 
-        diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
+    if st.checkbox("¿Las hojas se vuelven marrones sólo por la punta?", key=f"c1_{rk}"): diagnosticos_detectados["EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"] = "EXCESO DE ABONO O LIMITACIÓN DE ESPACIO"
+    if st.checkbox("¿Las hojas se vuelven marrones por los bordes?", key=f"c2_{rk}"): diagnosticos_detectados["QUEMADURA DE LAS HOJAS POR EL VIENTO"] = "QUEMADURA DE LAS HOJAS POR EL VIENTO"
+    if st.checkbox("¿Las hojas se vuelven amarillas y es una planta ácida?", key=f"c3_{rk}"): diagnosticos_detectados["SUELO ALCALINO"] = "SUELO ALCALINO"
+    if st.checkbox("¿El suelo de la planta está anegado?", key=f"c4_{rk}"): diagnosticos_detectados["PODREDUMBRE"] = "PODREDUMBRE"
+    if st.checkbox("¿Las hojas son pálidas y demasiado pequeñas?", key=f"c5_{rk}"): diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "FALTA DE NITROGENO / TIERRA ESTÉRIL"
+    if st.checkbox("¿Las hojas se caen tras volverse amarillas?", key=f"c6_{rk}"): diagnosticos_detectados["DESHOJE NATURAL"] = "DESHOJE NATURAL"
+    if st.checkbox("¿Primero se vuelven amarillas las hojas inferiores?", key=f"c7_{rk}"): diagnosticos_detectados["DESHOJE NATURAL"] = "DESHOJE NATURAL"
+    if st.checkbox("¿Primero se vuelven marrones las hojas?", key=f"c8_{rk}"): diagnosticos_detectados["EXCESO DE AGUA"] = "EXCESO DE AGUA"
+    if st.checkbox("¿La planta ha perdido todas las hojas de golpe?", key=f"c9_{rk}"): diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
+    if st.checkbox("¿Las hojas jaspeadas se vuelven marrones?", key=f"c10_{rk}"): diagnosticos_detectados["FALTA DE LUZ NATURAL"] = "FALTA DE LUZ NATURAL"
+    if st.checkbox("¿La planta ya no florece?", key=f"c11_{rk}"): diagnosticos_detectados["FALTA DE POTASIO"] = "FALTA DE POTASIO"
+    if st.checkbox("¿Tierra estéril o falta de nutrientes generalizada?", key=f"c12_{rk}"): diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "FALTA DE NITROGENO / TIERRA ESTÉRIL"
+    if st.checkbox("¿Afectación general por clima/ubicación?", key=f"c13_{rk}"): diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
+    
+    st.button("🔄 Limpiar e Ir Arriba", key="btn_c", on_click=solicitar_reset)
 
-# Panel de resultados y tratamiento
+# Panel de resultados y tratamientos
 st.markdown("---")
-st.subheader("📋 Panel de Diagnósticos Encontrados")
+st.markdown("## 📋 Panel de Diagnósticos Encontrados")
 
 if not diagnosticos_detectados:
     st.info("No se ha marcado ningún síntoma. Revisa la planta y marca las casillas correspondientes.")
 else:
     st.success(f"Se han detectado {len(diagnosticos_detectados)} problema(s) simultáneos en la planta:")
     for prob, clave in diagnosticos_detectados.items():
-        st.warning(f"🚨 **{prob}**")
+        st.markdown(f"### 🚨 {prob}")
         sol = DICCIONARIO_TRATAMIENTOS.get(clave, "Se recomienda consulta con el técnico agrícola.")
-        st.info(f"🛠️ **Tratamiento recomendado:** {sol}")
+        st.write(f"🛠️ **Tratamiento recomendado:** {sol}")
 
 st.markdown("---")
 st.caption("© 2026 www.jardineriaypaisajismo.com")
