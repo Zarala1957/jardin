@@ -7,23 +7,27 @@ st.set_page_config(
     layout="wide"
 )
 
-# CSS Inyectado para eliminar el padding superior y ocultar de raíz los menús flotantes
+# CSS Inyectado para solución completa de UI/UX, márgenes y eliminación del botón flotante
 st.markdown("""
     <style>
-    /* 1. Ocultar estrictamente cabeceras, botones de deploy, menú flotante de Streamlit y GitHub (Punto 7) */
+    /* 1. Ocultar menú superior, cabecera y barra de herramientas de Streamlit */
     #MainMenu {visibility: hidden !important; display: none !important;}
     footer {visibility: hidden !important; display: none !important;}
     header {visibility: hidden !important; display: none !important;}
-    .stDeployButton {display: none !important;}
-    .stAppDeployButton {display: none !important;}
     [data-testid="stHeader"] {display: none !important;}
     [data-testid="stToolbar"] {display: none !important;}
     [data-testid="stDecoration"] {display: none !important;}
     [data-testid="stStatusWidget"] {display: none !important;}
-    button[title="View source"] {display: none !important;}
-    .stActionButton {display: none !important;}
-
-    /* 2. Reducción drástica del padding y margen superior en el título */
+    
+    /* 2. Ocultar el botón flotante rojo/badge inferior derecho (Streamlit Cloud Badge) */
+    .viewerBadge_container__1s5nd {display: none !important;}
+    .viewerBadge_link__1S137 {display: none !important;}
+    [data-testid="stViewerBadge"] {display: none !important;}
+    div[class*="viewerBadge"] {display: none !important;}
+    a[href*="streamlit.io"] {display: none !important;}
+    .stAppDeployButton {display: none !important;}
+    
+    /* 3. Reducción de padding superior y márgenes del título */
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 1rem !important;
@@ -35,7 +39,7 @@ st.markdown("""
         margin-bottom: 0.5rem !important;
     }
 
-    /* Contenedor responsivo ajustado para el menú de navegación rápida */
+    /* Contenedor responsivo para el menú de navegación rápida */
     .menu-rapido-container {
         display: flex;
         flex-wrap: wrap;
@@ -63,7 +67,7 @@ st.markdown("""
         background-color: #e2e8f0;
     }
 
-    /* 3. Ajuste responsivo de fuentes para dispositivos móviles */
+    /* 4. Ajustes visuales para pantallas móviles */
     @media (max-width: 768px) {
         .block-container {
             padding-top: 0.5rem !important;
@@ -71,15 +75,9 @@ st.markdown("""
         html, body, [class*="css"] {
             font-size: 14px !important;
         }
-        h1 {
-            font-size: 1.4rem !important;
-        }
-        h2 {
-            font-size: 1.15rem !important;
-        }
-        .stCheckbox label p {
-            font-size: 0.88rem !important;
-        }
+        h1 { font-size: 1.4rem !important; }
+        h2 { font-size: 1.15rem !important; }
+        .stCheckbox label p { font-size: 0.88rem !important; }
     }
 
     /* Desplazamiento suave para anclas */
@@ -97,7 +95,7 @@ def reiniciar_app():
     st.session_state.reset_key += 1
     st.rerun()
 
-# Encabezado principal con margen ajustado
+# Encabezado principal
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app identificará los problemas y te dará el tratamiento fitosanitario inmediato.")
 
