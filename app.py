@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS optimizados para móvil y supresión de avisos del sistema
+# Estilos CSS optimizados
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden !important; display: none !important;}
@@ -62,24 +62,23 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Inicializar estados de control
+# Control de reinicio de casillas
 if "reset_key" not in st.session_state:
     st.session_state.reset_key = 0
-if "hacer_scroll" not in st.session_state:
-    st.session_state.hacer_scroll = False
 
-# Si se ha pulsado un botón de reset, ejecutar el scroll en el flujo principal
-if st.session_state.hacer_scroll:
-    st.components.v1.html("""
-        <script>
-            window.parent.scrollTo({top: 0, behavior: 'smooth'});
-        </script>
-    """, height=0)
-    st.session_state.hacer_scroll = False
-
-def solicitar_reset():
+def limpiar_casillas():
     st.session_state.reset_key += 1
-    st.session_state.hacer_scroll = True
+
+# Función para renderizar el botón de subir mediante clic directo de usuario
+def render_boton_subir():
+    st.components.v1.html("""
+        <button onclick="window.parent.scrollTo({top: 0, behavior: 'smooth'});" 
+                style="width: 100%; height: 38px; background-color: #0E1117; color: #FFFFFF; 
+                       border: 1px solid #4F4F4F; border-radius: 8px; font-weight: bold; 
+                       cursor: pointer; font-size: 14px; margin-top: 4px;">
+            ⬆️ Ir Arriba
+        </button>
+    """, height=48)
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta para obtener el tratamiento fitosanitario inmediato.")
@@ -153,7 +152,8 @@ with col1:
     if st.checkbox("¿Las hojas jaspeadas se vuelven marrones?", key=f"h18_{rk}"): diagnosticos_detectados["FALTA DE LUZ NATURAL"] = "FALTA DE LUZ NATURAL"
     if st.checkbox("¿La planta ya no florece?", key=f"h19_{rk}"): diagnosticos_detectados["FALTA DE POTASIO"] = "FALTA DE POTASIO"
     
-    st.button("🔄 Limpiar e Ir Arriba", key="btn_h", on_click=solicitar_reset)
+    st.button("🧹 Limpiar Selección", key="btn_h_limpiar", on_click=limpiar_casillas, use_container_width=True)
+    render_boton_subir()
 
 with col2:
     st.markdown('<div id="sintomas-tallos"></div>', unsafe_allow_html=True)
@@ -167,7 +167,8 @@ with col2:
     if st.checkbox("¿Hay moho en los tallos (gris/aterciopelado)?", key=f"t6_{rk}"): diagnosticos_detectados["BOTRITIS"] = "BOTRITIS"
     if st.checkbox("¿Hay gotas de líquido marrón en los tallos?", key=f"t7_{rk}"): diagnosticos_detectados["COCHINILLA"] = "COCHINILLA"
     
-    st.button("🔄 Limpiar e Ir Arriba", key="btn_t", on_click=solicitar_reset)
+    st.button("🧹 Limpiar Selección", key="btn_t_limpiar", on_click=limpiar_casillas, use_container_width=True)
+    render_boton_subir()
 
 with col3:
     st.markdown('<div id="problemas-cultivo"></div>', unsafe_allow_html=True)
@@ -187,9 +188,9 @@ with col3:
     if st.checkbox("¿Tierra estéril o falta de nutrientes generalizada?", key=f"c12_{rk}"): diagnosticos_detectados["FALTA DE NITROGENO / TIERRA ESTÉRIL"] = "FALTA DE NITROGENO / TIERRA ESTÉRIL"
     if st.checkbox("¿Afectación general por clima/ubicación?", key=f"c13_{rk}"): diagnosticos_detectados["PLANTA ESTRESADA"] = "PLANTA ESTRESADA"
     
-    st.button("🔄 Limpiar e Ir Arriba", key="btn_c", on_click=solicitar_reset)
+    st.button("🧹 Limpiar Selección", key="btn_c_limpiar", on_click=limpiar_casillas, use_container_width=True)
+    render_boton_subir()
 
-# Panel de resultados y tratamientos
 st.markdown("---")
 st.markdown("## 📋 Panel de Diagnósticos Encontrados")
 
