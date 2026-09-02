@@ -63,16 +63,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Ancla superior para la redirección al inicio
-st.markdown('<div id="inicio"></div>', unsafe_allow_html=True)
-
 if "reset_key" not in st.session_state:
     st.session_state.reset_key = 0
 
 def reiniciar_y_subir():
     st.session_state.reset_key += 1
-    # Redirección JS al ancla de inicio sin provocar warning de st.rerun
-    st.components.v1.html("<script>window.parent.location.href = '#inicio';</script>", height=0)
+    # Forzar el scroll absoluto al origen (top 0) de la ventana principal
+    st.components.v1.html("""
+        <script>
+            window.parent.scrollTo({top: 0, behavior: 'smooth'});
+        </script>
+    """, height=0)
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta para obtener el tratamiento fitosanitario inmediato.")
@@ -112,7 +113,7 @@ DICCIONARIO_TRATAMIENTOS = {
     "PODREDUMBRE": "Suspender los riegos de inmediato. Mejorar el drenaje del terreno o maceta aportando perlita o arena. Si afecta al cuello/raíz, aplicar un fungicida específico (ej. Fosetil-Al).",
     "FALTA DE NITROGENO / TIERRA ESTÉRIL": "Aportar materia orgánica al suelo (humus de lombriz, compost o estiércol maduro). Aplicar un abonado de fondo rico en Nitrógeno (N) de liberación lenta.",
     "DESHOJE NATURAL": "Proceso fisiológico normal en hojas viejas de la zona baja. No requiere acción. Mantener el mantenimiento habitual de la planta retirando las hojas secas caídas.",
-    "EXCESO DE AGUA": "Detener el riego inmediatamente y verificar la limpieza de los orificios de drenaje. Dejar secar el sustrato antes de volver a regar moderadamente.",
+    "EXCESO DE AGUA": "Detener el riego inmediatamente y verificar la limpieza de los orificios de drainage. Dejar secar el sustrato antes de volver a regar moderadamente.",
     "PLANTA ESTRESADA": "Evitar mover la planta de sitio constantemente. Suspender el abono hasta que se estabilice. Mantener riegos moderados y estables sin saturar el suelo.",
     "FALTA DE LUZ NATURAL": "Trasladar la planta de forma progresiva a una ubicación con mayor exposición solar o iluminación indirecta brillante (evitar sol directo de golpe para no quemarla).",
     "FALTA DE POTASIO": "Aplicar un fertilizante rico en Potasio (K), como sulfato potásico o patasa, especialmente antes y durante la época de floración para fortalecer los tejidos."
