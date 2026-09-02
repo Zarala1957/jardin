@@ -6,9 +6,20 @@ st.set_page_config(
     layout="wide"
 )
 
-# Estilos CSS optimizados para móvil
+# Estilos CSS optimizados para móvil y supresión de avisos del sistema
 st.markdown("""
     <style>
+    /* Ocultar menú superior, cabecera, footer y mensajes de advertencia/notificación del sistema */
+    #MainMenu {visibility: hidden !important; display: none !important;}
+    footer {visibility: hidden !important; display: none !important;}
+    header {visibility: hidden !important; display: none !important;}
+    [data-testid="stHeader"] {display: none !important;}
+    [data-testid="stToolbar"] {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
+    .stAppDeployButton {display: none !important;}
+    [data-testid="stNotification"], div.stAlert {display: none !important;}
+
     .block-container {
         padding-top: 1rem !important;
         padding-bottom: 1rem !important;
@@ -52,7 +63,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Ancla superior para redirección
+# Ancla superior para la redirección al inicio
 st.markdown('<div id="inicio"></div>', unsafe_allow_html=True)
 
 if "reset_key" not in st.session_state:
@@ -60,9 +71,8 @@ if "reset_key" not in st.session_state:
 
 def reiniciar_y_subir():
     st.session_state.reset_key += 1
-    # JavaScript para forzar el scroll al inicio inmediatamente
+    # Redirección JS al ancla de inicio sin provocar warning de st.rerun
     st.components.v1.html("<script>window.parent.location.href = '#inicio';</script>", height=0)
-    st.rerun()
 
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta para obtener el tratamiento fitosanitario inmediato.")
