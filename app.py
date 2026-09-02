@@ -7,10 +7,10 @@ st.set_page_config(
     layout="wide"
 )
 
-# CSS Inyectado para solución completa de UI/UX, márgenes y eliminación del botón flotante
+# CSS Inyectado para solución de UI/UX y ocultado de elementos nativos
 st.markdown("""
     <style>
-    /* 1. Ocultar menú superior, cabecera y barra de herramientas de Streamlit */
+    /* Ocultar menú superior, cabecera y footer nativos */
     #MainMenu {visibility: hidden !important; display: none !important;}
     footer {visibility: hidden !important; display: none !important;}
     header {visibility: hidden !important; display: none !important;}
@@ -18,18 +18,11 @@ st.markdown("""
     [data-testid="stToolbar"] {display: none !important;}
     [data-testid="stDecoration"] {display: none !important;}
     [data-testid="stStatusWidget"] {display: none !important;}
-    
-    /* 2. Ocultar el botón flotante rojo/badge inferior derecho (Streamlit Cloud Badge) */
-    .viewerBadge_container__1s5nd {display: none !important;}
-    .viewerBadge_link__1S137 {display: none !important;}
-    [data-testid="stViewerBadge"] {display: none !important;}
-    div[class*="viewerBadge"] {display: none !important;}
-    a[href*="streamlit.io"] {display: none !important;}
     .stAppDeployButton {display: none !important;}
-    
-    /* 3. Reducción de padding superior y márgenes del título */
+
+    /* Reducción drástica de padding superior y márgenes del título */
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 0.5rem !important;
         padding-bottom: 1rem !important;
         margin-top: 0rem !important;
     }
@@ -67,10 +60,10 @@ st.markdown("""
         background-color: #e2e8f0;
     }
 
-    /* 4. Ajustes visuales para pantallas móviles */
+    /* Ajustes visuales para pantallas móviles */
     @media (max-width: 768px) {
         .block-container {
-            padding-top: 0.5rem !important;
+            padding-top: 0.2rem !important;
         }
         html, body, [class*="css"] {
             font-size: 14px !important;
@@ -80,12 +73,41 @@ st.markdown("""
         .stCheckbox label p { font-size: 0.88rem !important; }
     }
 
-    /* Desplazamiento suave para anclas */
     html {
         scroll-behavior: smooth;
     }
     </style>
 """, unsafe_allow_html=True)
+
+# Inyección de JavaScript para eliminar de forma continua el botón flotante rojo (Streamlit Cloud Badge)
+st.components.v1.html("""
+    <script>
+        function ocultarBadge() {
+            const parentDoc = window.parent.document;
+            // Selectores habituales del badge de Streamlit Cloud
+            const selectors = [
+                'div[class*="viewerBadge"]',
+                'div[class*="ViewerBadge"]',
+                '[data-testid="stViewerBadge"]',
+                'a[href*="streamlit.io"]'
+            ];
+            
+            selectors.forEach(selector => {
+                const elements = parentDoc.querySelectorAll(selector);
+                elements.forEach(el => {
+                    el.style.display = 'none';
+                    el.style.opacity = '0';
+                    el.style.pointerEvents = 'none';
+                });
+            });
+        }
+
+        // Ejecutar al cargar y observar cambios dinámicos en el DOM
+        ocultarBadge();
+        const observer = new MutationObserver(ocultarBadge);
+        observer.observe(window.parent.document.body, { childList: true, subtree: true });
+    </script>
+""", height=0)
 
 # Manejo de estado para el botón de Reset
 if "reset_key" not in st.session_state:
