@@ -7,28 +7,45 @@ st.set_page_config(
     layout="wide"
 )
 
-# CSS Inyectado para solución de cuestiones de UI/UX Móvil y ocultación estricta de menús
+# CSS Inyectado para eliminar el padding superior y ocultar de raíz los menús flotantes
 st.markdown("""
     <style>
-    /* 1 y 7. Ocultar de forma estricta cabeceras, botones de deploy y marcas de Streamlit/GitHub */
-    #MainMenu {visibility: hidden; display: none !important;}
-    footer {visibility: hidden; display: none !important;}
-    header {visibility: hidden; display: none !important;}
+    /* 1. Ocultar estrictamente cabeceras, botones de deploy, menú flotante de Streamlit y GitHub (Punto 7) */
+    #MainMenu {visibility: hidden !important; display: none !important;}
+    footer {visibility: hidden !important; display: none !important;}
+    header {visibility: hidden !important; display: none !important;}
     .stDeployButton {display: none !important;}
     .stAppDeployButton {display: none !important;}
     [data-testid="stHeader"] {display: none !important;}
     [data-testid="stToolbar"] {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
+    button[title="View source"] {display: none !important;}
+    .stActionButton {display: none !important;}
 
-    /* Contenedor responsivo para el menú de navegación rápida */
+    /* 2. Reducción drástica del padding y margen superior en el título */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+        margin-top: 0rem !important;
+    }
+    h1 {
+        padding-top: 0rem !important;
+        margin-top: 0rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Contenedor responsivo ajustado para el menú de navegación rápida */
     .menu-rapido-container {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 8px;
         background-color: #f0f2f6;
-        padding: 10px;
+        padding: 8px;
         border-radius: 8px;
-        margin-bottom: 20px;
+        margin-top: 10px;
+        margin-bottom: 15px;
         text-align: center;
     }
     .menu-btn {
@@ -48,14 +65,17 @@ st.markdown("""
 
     /* 3. Ajuste responsivo de fuentes para dispositivos móviles */
     @media (max-width: 768px) {
+        .block-container {
+            padding-top: 0.5rem !important;
+        }
         html, body, [class*="css"] {
             font-size: 14px !important;
         }
         h1 {
-            font-size: 1.5rem !important;
+            font-size: 1.4rem !important;
         }
         h2 {
-            font-size: 1.2rem !important;
+            font-size: 1.15rem !important;
         }
         .stCheckbox label p {
             font-size: 0.88rem !important;
@@ -77,7 +97,7 @@ def reiniciar_app():
     st.session_state.reset_key += 1
     st.rerun()
 
-# Encabezado principal
+# Encabezado principal con margen ajustado
 st.title("🌱 Asistente Multidiagnóstico para Jardinería")
 st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app identificará los problemas y te dará el tratamiento fitosanitario inmediato.")
 
@@ -85,7 +105,7 @@ st.write("Selecciona **todos los síntomas** que observes en la planta. Esta app
 if st.button("🔄 Reiniciar / Limpiar Selección", on_click=reiniciar_app):
     pass
 
-# 4. Enlaces de navegación rápida corregidos con Flexbox responsivo para móvil
+# Enlaces de navegación rápida responsivos
 st.markdown("""
 <div class="menu-rapido-container">
     <a href="#sintomas-hojas" class="menu-btn">🍃 Hojas</a>
